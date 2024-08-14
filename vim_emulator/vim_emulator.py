@@ -9,14 +9,13 @@ from typing import Callable, Tuple, Optional
 from copy import deepcopy
 import re
 
-from .commands import match_table
+from .normal import match_table
 
 
 class Cursor:
     def __init__(self, row: int, col: int) -> None:
-        self.x = row
-        self.y = col
-
+        self.row = row
+        self.col = col
 
 class Buffer:
     def __init__(self, data: str) -> None:
@@ -63,6 +62,6 @@ class VimEmulator:
 
     def print(self) -> None:
         _msg = deepcopy(self.buffer)
-        _msg.data[self.cursor.y][self.cursor.x] = "█"
+        _msg.data[self.cursor.row][self.cursor.col] = "█"
         print(_msg)
         print("-" * self.buffer.width)
