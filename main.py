@@ -10,5 +10,24 @@ from vim_emulator.vim_emulator import VimEmulator
 
 if __name__ == "__main__":
 
-    ## //ANCHOR - Test basic cursor movement
-    VimEmulator("hello\nworld\nhahahahaha").exec("")
+    ## //ANCHOR - Test hjkl
+    # VimEmulator("hello\nworld\nhahahahaha").exec("")
+    # VimEmulator("hello\nworld\nhahahahaha").exec("hjkhlklhkjhjlkhkjhjhjhlj")
+
+    ## //ANCHOR - Test w
+    # VimEmulator("hello world hahahahaha").exec("w")
+    # VimEmulator("hello world hahahahaha").exec("ww")
+    # VimEmulator("hello world hahahahaha").exec("www")
+    # VimEmulator("hello world\n hahahahaha").exec("www")
+    # VimEmulator("hello world\n\n\n hahahahaha").exec("www")
+    # VimEmulator("hello world\n\n\n hahahahaha").exec("wwww")
+    # VimEmulator("hello $orld\n\n\n hahahahaha").exec("wwww")
+    # VimEmulator("hello w$rld\n\n\n hahahahaha").exec("wwwwwwww")
+
+    ## //ANCHOR - Test e
+    # VimEmulator("hello world hahahahaha").exec("eee")
+    # VimEmulator("hello world\n hahahahaha").exec("eee")
+    # VimEmulator("hello world\n\n\n hahahahaha").exec("eee")
+    # VimEmulator("hello world\n\n\n hahahahaha").exec("eeee")
+    # VimEmulator("hello $orld\n\n\n hahahahaha").exec("eeee")
+    # VimEmulator("hello w$rld\n\n\n hahahahaha").exec("eeeeeeee")
