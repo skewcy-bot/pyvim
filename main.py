@@ -24,6 +24,9 @@ if __name__ == "__main__":
     # VimEmulator("hello $orld\n\n\n hahahahaha").exec("wwww")
     # VimEmulator("hello w$rld\n\n\n hahahahaha").exec("wwwwwwww")
 
+    ## //ANCHOR - Test W
+    VimEmulator("hello w$rld\n\n\n hahahahaha").exec("WWWWWWWW")
+
     ## //ANCHOR - Test e
     # VimEmulator("hello world hahahahaha").exec("eee")
     # VimEmulator("hello world\n hahahahaha").exec("eee")
