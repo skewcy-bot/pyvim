@@ -8,10 +8,10 @@ Created:  2024-07-21T17:28:49.755Z
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Callable
 
-from .comms import _is_out_of_bounds, _is_word_start, _is_Word_start,_is_word_end, _is_Word_end
+from .comms import _is_out_of_bounds, _is_word_start, _is_Word_start,_is_word_end, _is_Word_end, _is_empty_line
 
 if TYPE_CHECKING:
-    from .vim_emulator import VimEmulator
+    from .pyvim import VimEmulator
 
 
 """

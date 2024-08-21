@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from .vim_emulator import VimEmulator, Cursor, Buffer
+    from .pyvim import VimEmulator, Cursor, Buffer
 
 
 """
@@ -119,7 +119,7 @@ Check if the current character is a word start character.
 
 
 def _is_word_start(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
-    from .vim_emulator import Cursor
+    from .pyvim import Cursor
 
     if cursor is None:
         cursor = vim._cursor
@@ -144,7 +144,7 @@ Check if the current character is a WORD start character.
 
 
 def _is_Word_start(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
-    from .vim_emulator import Cursor
+    from .pyvim import Cursor
 
     if cursor is None:
         cursor = vim._cursor
@@ -168,7 +168,7 @@ Check if the current character is a word end character.
 
 
 def _is_word_end(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
-    from .vim_emulator import Cursor
+    from .pyvim import Cursor
 
     if cursor is None:
         cursor = vim._cursor
@@ -193,7 +193,7 @@ Check if the current character is a WORD end character.
 
 
 def _is_Word_end(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
-    from .vim_emulator import Cursor
+    from .pyvim import Cursor
 
     if cursor is None:
         cursor = vim._cursor

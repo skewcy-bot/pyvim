@@ -5,7 +5,7 @@ Desc: description
 Created:  2024-07-21T16:32:00.918Z
 """
 
-from vim_emulator.vim_emulator import VimEmulator
+from vim_emulator.pyvim import VimEmulator
 
 
 if __name__ == "__main__":
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # VimEmulator("hello w$rld\n\n\n hahahahaha").exec("wwwwwwww")
 
     ## //ANCHOR - Test W
-    VimEmulator("hello w$rld\n\n\n hahahahaha").exec("WWWWWWWW")
+    # VimEmulator("hello w$rld\n\n\n hahahahaha").exec("WWWWWWWW")
 
     ## //ANCHOR - Test e
     # VimEmulator("hello world hahahahaha").exec("eee")
@@ -34,3 +34,6 @@ if __name__ == "__main__":
     # VimEmulator("hello world\n\n\n hahahahaha").exec("eeee")
     # VimEmulator("hello $orld\n\n\n hahahahaha").exec("eeee")
     # VimEmulator("hello w$rld\n\n\n hahahahaha").exec("eeeeeeee")
+
+    ## //ANCHOR - Test E
+    VimEmulator("hello w$rld\n\n\n hahahahaha").exec("EEEEEEEEEE")
