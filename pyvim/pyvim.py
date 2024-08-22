@@ -1,6 +1,6 @@
 """
 Author: <Chuanyu> (skewcy@gmail.com)
-vim_emulator.py (c) 2024
+pyvim.py (c) 2024
 Desc: description
 Created:  2024-07-21T16:32:14.272Z
 """
@@ -10,7 +10,8 @@ from typing import Callable, Tuple, Optional
 from copy import deepcopy
 import re
 
-from .normal import match_table
+from .normal.motion import match_table
+from .comms import _is_out_of_bounds
 
 
 class bcolors:
@@ -58,10 +59,19 @@ class Buffer:
         return "\n".join("".join(line) for line in self.data)
 
 
+class Screen:
+    def __init__(self, top=0, lines=5) -> None:
+        self.top = top
+        self.lines = lines
+
+
 class VimEmulator:
-    def __init__(self, data: str) -> None:
-        self._cursor = Cursor(0, 0)
+    def __init__(self, data: str, row: int = 0, col: int = 0) -> None:
+        self._cursor = Cursor(row, col)
         self._buffer = Buffer(data=data)
+        self._screen = Screen(top=0, lines=self.length)
+        if _is_out_of_bounds(self):
+            raise ValueError("Cursor out of bounds")
 
         self.mode = "x"  ## x: normal, i: insert, v: visual, r: replace, c: command
 
@@ -103,7 +113,15 @@ class VimEmulator:
                 return command, result.end()
         return None, 0
 
-    def print(self, cl: str, range: tuple[int, int]) -> None:
+    def print(self, cl: str, comm_range: tuple[int, int]) -> None:
+        _comm = (
+            cl[: comm_range[0]]
+            + bcolors.FAIL
+            + cl[comm_range[0] : comm_range[1]]
+            + bcolors.ENDC
+            + cl[comm_range[1] :]
+        )
+
         _msg = deepcopy(self._buffer)
         if self.mode == "x":
             if not len(_msg.data[self.row]):
@@ -111,19 +129,29 @@ class VimEmulator:
             else:
                 _msg.data[self._cursor.row][self._cursor.col] = "█"
 
-        _comm = (
-            cl[: range[0]]
-            + bcolors.FAIL
-            + cl[range[0] : range[1]]
-            + bcolors.ENDC
-            + cl[range[1] :]
-        )
+        _line_number_width = len(str(self._screen.top + self._screen.lines))
+
         _split = (
-            bcolors.OKBLUE + "-" * [len(line) for line in _msg.data][0] + bcolors.ENDC
+            bcolors.OKBLUE
+            + "-" * (max([len(line) for line in _msg.data]) + _line_number_width + 1)
+            + bcolors.ENDC
         )
         print("Exec: ", _comm)
+
         print(_split)
-        print(_msg)
+
+        for _line_index in range(
+            self._screen.top, self._screen.top + self._screen.lines
+        ):
+            print(
+                bcolors.WARNING
+                + str(_line_index + 1)
+                + " " * (_line_number_width - len(str(_line_index)))
+                + bcolors.ENDC,
+                end=" ",
+            )
+            print("".join(_msg.data[_line_index]))
+
         print(_split)
 
         if self.gif:

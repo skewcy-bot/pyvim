@@ -10,7 +10,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from vim_emulator import VimEmulator
+from pyvim import VimEmulator
 import re
 import subprocess
 import time

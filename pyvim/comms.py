@@ -6,7 +6,7 @@ Created:  2024-08-18T19:07:50.750Z
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Tuple
 
 if TYPE_CHECKING:
     from .pyvim import VimEmulator, Cursor, Buffer
@@ -135,6 +135,7 @@ def _is_word_start(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
             return True
         return False
 
+
 """
 Check if the current character is a WORD start character.
 
@@ -157,6 +158,7 @@ def _is_Word_start(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
         if not _is_char(vim, Cursor(cursor.row, cursor.col - 1)):
             return True
         return False
+
 
 """
 Check if the current character is a word end character.
@@ -207,7 +209,6 @@ def _is_Word_end(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
         return False
 
 
-
 """
 Check if the current row buffer is empty.
 """
@@ -219,3 +220,53 @@ def _is_empty_line(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
     if vim.width[cursor.row] == 0:
         return True
     return False
+
+
+"""
+Check if the current row buffer contains no words (only spaces).
+
+    - Empty line is not considered a blank line.
+"""
+
+
+def _is_blank_line(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
+    if cursor is None:
+        cursor = vim._cursor
+    if len(vim[cursor.row]) == 0:
+        return False
+    if all(char == " " for char in vim[cursor.row]):
+        return True
+    return False
+
+
+"""
+Generate a random buffer initialization.
+"""
+
+
+def _get_random_buffer(width: int = 15, length: int = 8) -> str:
+    import random
+
+    PRINTABLE = [
+        x
+        for x in (
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
+            + "~!@#$%^&*()-=+[{]};:'\"\\|,<.>/?"
+        )
+    ]
+
+    return "".join(
+        [
+            "".join(
+                [random.choice(PRINTABLE) for y in range(random.randint(1, width))]
+                + ["\n"]
+            )
+        ]
+        + [
+            "".join(
+                [random.choice(PRINTABLE) for y in range(random.randint(0, width))]
+                + ["\n"]
+            )
+            for i in range(1, length)
+        ]
+    )

@@ -8,10 +8,18 @@ Created:  2024-07-21T17:28:49.755Z
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Callable
 
-from .comms import _is_out_of_bounds, _is_word_start, _is_Word_start,_is_word_end, _is_Word_end, _is_empty_line
+from ..comms import (
+    _is_out_of_bounds,
+    _is_word_start,
+    _is_Word_start,
+    _is_word_end,
+    _is_Word_end,
+    _is_empty_line,
+    _is_blank_line,
+)
 
 if TYPE_CHECKING:
-    from .pyvim import VimEmulator
+    from ..pyvim import VimEmulator
 
 
 """
@@ -56,6 +64,7 @@ match_table["h"] = motion_h
 Move the cursor to the beginning of the next word.
 
     - Special case: Not find this line, move to the next word on the next line, or the end of this line, or next empty line.
+    - Special case: If all characters are non-word characters next line, skip this line.
 """
 
 
@@ -69,6 +78,9 @@ def motion_w(vim: VimEmulator) -> VimEmulator:
         if vim.row < vim.length - 1:
             vim.row += 1
             vim.col = 0
+            while _is_blank_line(vim) and vim.row < vim.length - 1:
+                vim.row += 1
+                vim.col = 0
             while not _is_out_of_bounds(vim) and not _is_word_start(vim):
                 vim.col += 1
         else:
@@ -96,11 +108,15 @@ def motion_W(vim: VimEmulator) -> VimEmulator:
         if vim.row < vim.length - 1:
             vim.row += 1
             vim.col = 0
+            while _is_blank_line(vim) and vim.row < vim.length - 1:
+                vim.row += 1
+                vim.col = 0
             while not _is_out_of_bounds(vim) and not _is_Word_start(vim):
                 vim.col += 1
         else:
             vim.col = min(vim.col, vim.width[vim.row] - 1)
     return vim
+
 
 match_table["W"] = motion_W
 
@@ -110,6 +126,7 @@ Move the cursor to the end of the next word.
     - Special case: Not find this line, move to the next word on the next line, or the end of this line.
     - Special case: It skip next line if it is empty.
 """
+
 
 def motion_e(vim: VimEmulator) -> VimEmulator:
     vim.col += 1
@@ -142,6 +159,7 @@ Move the cursor to the end of the next WORD.
     - Special case: It skip next line if it is empty.
 """
 
+
 def motion_E(vim: VimEmulator) -> VimEmulator:
     vim.col += 1
     while not _is_out_of_bounds(vim) and not _is_Word_end(vim):
@@ -163,5 +181,114 @@ def motion_E(vim: VimEmulator) -> VimEmulator:
             vim.col = min(vim.col, vim.width[vim.row] - 1)
     return vim
 
+
 match_table["E"] = motion_E
 
+"""
+Move the cursor to the start of previous word.
+
+    - Special case: Not find this line, move to the previous word on the previous line, or the start of this line.
+    - Special case: It skip previous line if it is empty.
+"""
+
+
+def motion_b(vim: VimEmulator) -> VimEmulator:
+    vim.col -= 1
+    while not _is_out_of_bounds(vim) and not _is_word_start(vim):
+        vim.col -= 1
+
+    ## Special case: Not find this line
+    if _is_out_of_bounds(vim):
+        if vim.row > 0:
+            vim.row -= 1
+            vim.col = vim.width[vim.row] - 1
+            while _is_blank_line(vim) and vim.row > 0:
+                vim.row -= 1
+                vim.col = vim.width[vim.row] - 1
+            while not _is_out_of_bounds(vim) and not _is_word_start(vim):
+                vim.col -= 1
+        else:
+            vim.col = max(vim.col, 0)
+    return vim
+
+
+match_table["b"] = motion_b
+
+
+"""
+Move the cursor to the start of previous WORD.
+    
+        - Special case: Not find this line, move to the previous word on the previous line, or the start of this line.
+        - Special case: It skip previous line if it is empty.
+"""
+
+
+def motion_B(vim: VimEmulator) -> VimEmulator:
+    vim.col -= 1
+    while not _is_out_of_bounds(vim) and not _is_Word_start(vim):
+        vim.col -= 1
+
+    ## Special case: Not find this line
+    if _is_out_of_bounds(vim):
+        if vim.row > 0:
+            vim.row -= 1
+            vim.col = vim.width[vim.row] - 1
+            while _is_blank_line(vim) and vim.row > 0:
+                vim.row -= 1
+                vim.col = vim.width[vim.row] - 1
+            while not _is_out_of_bounds(vim) and not _is_Word_start(vim):
+                vim.col -= 1
+        else:
+            vim.col = max(vim.col, 0)
+    return vim
+
+
+match_table["B"] = motion_B
+
+"""
+Move the cursor to the start of the line.
+"""
+
+
+def motion_H(vim: VimEmulator) -> VimEmulator:
+    vim.row = vim._screen.top
+    if _is_empty_line(vim) or _is_blank_line(vim):
+        vim.col = 0
+    else:
+        pass  ##TODO - Find the first non-blank character
+    return vim
+
+
+match_table["H"] = motion_H
+
+"""
+Move the cursor to the middle of the line.
+"""
+
+
+def motion_M(vim: VimEmulator) -> VimEmulator:
+    vim.row = vim._screen.top + vim._screen.lines // 2
+    if _is_empty_line(vim) or _is_blank_line(vim):
+        vim.col = 0
+    else:
+        pass  ##TODO - Find the first non-blank character
+    return vim
+
+
+match_table["M"] = motion_M
+
+"""
+Move the cursor to the bottom of the line.
+"""
+
+
+def motion_L(vim: VimEmulator) -> VimEmulator:
+    vim.row = vim._screen.top + vim._screen.lines - 1
+    if _is_empty_line(vim) or _is_blank_line(vim):
+        vim.col = 0
+    else:
+        pass  ##TODO - Find the first non-blank character
+    return vim
+
+
+match_table["L"] = motion_L
