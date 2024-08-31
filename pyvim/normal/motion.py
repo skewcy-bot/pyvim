@@ -6,6 +6,7 @@ Created:  2024-07-21T17:28:49.755Z
 """
 
 from __future__ import annotations
+from copy import deepcopy
 from typing import TYPE_CHECKING, Dict, Callable
 
 from ..comms import (
@@ -248,10 +249,53 @@ match_table["B"] = motion_B
 """
 Move the cursor to the first non-blank character of the line.
 """
-def 
+
+
+def motion_caret(vim: VimEmulator) -> VimEmulator:
+    if _is_empty_line(vim):
+        return vim
+    vim.col = 0
+    while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] == " ":
+        vim.col += 1
+    if _is_out_of_bounds(vim):
+        vim.col = vim.width[vim.row] - 1
+    return vim
+
+
+match_table["\^"] = motion_caret
+
 
 """
-Move the cursor to the start of the line.
+Move the cursor to the end of the line.
+"""
+
+
+def motion_dollar(vim: VimEmulator) -> VimEmulator:
+    if _is_empty_line(vim):
+        return vim
+    vim.col = vim.width[vim.row] - 1
+    return vim
+
+
+match_table["\$"] = motion_dollar
+
+"""
+Move the cursor to the start of the line. 
+"""
+
+
+def motion_zero(vim: VimEmulator) -> VimEmulator:
+    if _is_empty_line(vim):
+        return vim
+    vim.col = 0
+    return vim
+
+
+match_table["0"] = motion_zero
+
+
+"""
+Move the cursor to the top of the screen.
 """
 
 
@@ -260,7 +304,7 @@ def motion_H(vim: VimEmulator) -> VimEmulator:
     if _is_empty_line(vim) or _is_blank_line(vim):
         vim.col = 0
     else:
-        pass  ##TODO - Find the first non-blank character
+        motion_caret(vim)
     return vim
 
 
@@ -276,7 +320,7 @@ def motion_M(vim: VimEmulator) -> VimEmulator:
     if _is_empty_line(vim) or _is_blank_line(vim):
         vim.col = 0
     else:
-        pass  ##TODO - Find the first non-blank character
+        motion_caret(vim)
     return vim
 
 
@@ -292,7 +336,7 @@ def motion_L(vim: VimEmulator) -> VimEmulator:
     if _is_empty_line(vim) or _is_blank_line(vim):
         vim.col = 0
     else:
-        pass  ##TODO - Find the first non-blank character
+        motion_caret(vim)
     return vim
 
 
@@ -304,8 +348,7 @@ Move cursor to the paired bracket.
 
 
 def motion_percent(vim: VimEmulator) -> VimEmulator:
-    _paired_brackets = {"(": ")", "{": "}", "[": "]",
-                        ")": "(", "}": "{", "]": "["}
+    _paired_brackets = {"(": ")", "{": "}", "[": "]", ")": "(", "}": "{", "]": "["}
     _forward_brackets = set(["(", "{", "["])
 
     if vim[vim.row][vim.col] in _forward_brackets:
@@ -334,7 +377,60 @@ def motion_percent(vim: VimEmulator) -> VimEmulator:
                     vim.row = i
                     vim.col = j
                     return vim
-    return vim 
+    return vim
 
 
 match_table["%"] = motion_percent
+
+"""
+Move cursor to next paragraph.
+
+    - If the cursor is on a blank line, move to the next bland line, then move to the next non-blank line. 
+    - If the cursor is on a non-blank line, move to the next blank line.
+"""
+
+
+def motion_brace_right(vim: VimEmulator) -> VimEmulator:
+    _cursor = deepcopy(vim._cursor)
+    vim.row += 1
+    # if empty line
+    if _is_empty_line(vim, _cursor):
+        ## Move to the next non-empty line
+        while vim.row < vim.length and _is_empty_line(vim):
+            vim.row += 1
+
+    ## Move to the next empty line
+    while vim.row < vim.length and not _is_empty_line(vim):
+        vim.row += 1
+
+    if vim.row == vim.length:
+        vim.row -= 1
+        motion_dollar(vim)
+    return vim
+
+
+match_table["\}"] = motion_brace_right
+
+"""
+Move cursor to previous paragraph.
+"""
+
+def motion_brace_left(vim: VimEmulator) -> VimEmulator:
+    _cursor = deepcopy(vim._cursor)
+    vim.row -= 1
+    # if empty line
+    if _is_empty_line(vim, _cursor):
+        ## Move to the previous non-empty line
+        while vim.row >= 0 and _is_empty_line(vim):
+            vim.row -= 1
+
+    ## Move to the previous empty line
+    while vim.row >= 0 and not _is_empty_line(vim):
+        vim.row -= 1
+
+    if vim.row == -1:
+        vim.row += 1
+        motion_zero(vim)
+    return vim
+
+match_table["\{"] = motion_brace_left

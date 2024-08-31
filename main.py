@@ -51,3 +51,20 @@ if __name__ == "__main__":
     # VimEmulator("{hello world\n\n\n hahahahaha}").exec("%%")
     # VimEmulator("{hello (world\n\n\n hahaha}haha)", -1, -1).exec("%%")
 
+    # ## //ANCHOR - Test ^
+    # VimEmulator("hello world\n\n\n hahahahaha", 0, 5).exec("^")
+    # VimEmulator("hello world\n\n    \n hahahahaha", 0, 0).exec("j^")
+    # VimEmulator("hello world\n\n    \n hahahahaha", 2, 1).exec("^")
+
+    ## //ANCHOR - Test $
+    # VimEmulator("hello world\n\n\n hahahahaha", 0, 5).exec("$")
+
+    ## //ANCHOR - Test 0
+    # VimEmulator("hello world\n\n\n hahahahaha", 0, 5).exec("0")
+
+    ## //ANCHOR - Test }
+    # VimEmulator("hello world\n\n    \n hahahahaha", 0, 2).exec("}")
+    # VimEmulator("hello world\n    \n hahahahaha\n\n \naasdf\n", 0, 2).exec("}}}")
+
+    ## //ANCHOR - Test {
+    # VimEmulator("hello world\n    \n hahahahaha\n\n \naasdf", -1, -1).exec("{{{{")

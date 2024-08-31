@@ -81,7 +81,7 @@ class VimEmulator:
         self.mode = "x"  ## x: normal, i: insert, v: visual, r: replace, c: command
 
         self.verbose = True
-        self.gif = True
+        self.gif = False
 
     width = delegate_property("_buffer", "width")
     length = delegate_property("_buffer", "length")
