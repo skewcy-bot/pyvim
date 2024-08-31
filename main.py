@@ -44,4 +44,10 @@ if __name__ == "__main__":
     # VimEmulator("hello w$rld\n\n     \n  hahahahaha", 3, 5).exec("bbbb")
 
     # ## //ANCHOR - Test LMH
-    VimEmulator(_get_random_buffer(5, 10)).exec("LMHHML")
+    # VimEmulator(_get_random_buffer(5, 10)).exec("LMHHML")
+
+    # ## //ANCHOR - Test %
+    # VimEmulator("hello world\n\n\n hahahahaha").exec("%%")
+    # VimEmulator("{hello world\n\n\n hahahahaha}").exec("%%")
+    # VimEmulator("{hello (world\n\n\n hahaha}haha)", -1, -1).exec("%%")
+

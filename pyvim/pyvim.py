@@ -43,12 +43,6 @@ def delegate_property(attribute_name, property_name):
     return property(getter, setter)
 
 
-class Cursor:
-    def __init__(self, row: int, col: int) -> None:
-        self.row = row
-        self.col = col
-
-
 class Buffer:
     def __init__(self, data: str) -> None:
         self.data = [list(line) for line in data.split("\n")]
@@ -59,6 +53,17 @@ class Buffer:
         return "\n".join("".join(line) for line in self.data)
 
 
+class Cursor:
+    def __init__(self, row: int, col: int, buffer: Buffer) -> None:
+        if row < 0:
+            row = buffer.length + row
+        self.row = row
+
+        if col < 0:
+            col = buffer.width[row] + col
+        self.col = col
+
+
 class Screen:
     def __init__(self, top=0, lines=5) -> None:
         self.top = top
@@ -67,8 +72,8 @@ class Screen:
 
 class VimEmulator:
     def __init__(self, data: str, row: int = 0, col: int = 0) -> None:
-        self._cursor = Cursor(row, col)
         self._buffer = Buffer(data=data)
+        self._cursor = Cursor(row, col, self._buffer)
         self._screen = Screen(top=0, lines=self.length)
         if _is_out_of_bounds(self):
             raise ValueError("Cursor out of bounds")
@@ -76,7 +81,7 @@ class VimEmulator:
         self.mode = "x"  ## x: normal, i: insert, v: visual, r: replace, c: command
 
         self.verbose = True
-        self.gif = False
+        self.gif = True
 
     width = delegate_property("_buffer", "width")
     length = delegate_property("_buffer", "length")

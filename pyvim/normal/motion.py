@@ -246,6 +246,11 @@ def motion_B(vim: VimEmulator) -> VimEmulator:
 match_table["B"] = motion_B
 
 """
+Move the cursor to the first non-blank character of the line.
+"""
+def 
+
+"""
 Move the cursor to the start of the line.
 """
 
@@ -292,3 +297,44 @@ def motion_L(vim: VimEmulator) -> VimEmulator:
 
 
 match_table["L"] = motion_L
+
+"""
+Move cursor to the paired bracket.
+"""
+
+
+def motion_percent(vim: VimEmulator) -> VimEmulator:
+    _paired_brackets = {"(": ")", "{": "}", "[": "]",
+                        ")": "(", "}": "{", "]": "["}
+    _forward_brackets = set(["(", "{", "["])
+
+    if vim[vim.row][vim.col] in _forward_brackets:
+        ## Search in currrent line
+        for i in range(vim.col + 1, vim.width[vim.row]):
+            if vim[vim.row][i] == _paired_brackets[vim[vim.row][vim.col]]:
+                vim.col = i
+                return vim
+        ## Search in next lines
+        for i in range(vim.row + 1, vim.length):
+            for j in range(vim.width[i]):
+                if vim[i][j] == _paired_brackets[vim[vim.row][vim.col]]:
+                    vim.row = i
+                    vim.col = j
+                    return vim
+    else:
+        ## Search in currrent line
+        for i in range(vim.col - 1, -1, -1):
+            if vim[vim.row][i] == _paired_brackets[vim[vim.row][vim.col]]:
+                vim.col = i
+                return vim
+        ## Search in previous lines
+        for i in range(vim.row - 1, -1, -1):
+            for j in range(vim.width[i] - 1, -1, -1):
+                if vim[i][j] == _paired_brackets[vim[vim.row][vim.col]]:
+                    vim.row = i
+                    vim.col = j
+                    return vim
+    return vim 
+
+
+match_table["%"] = motion_percent
