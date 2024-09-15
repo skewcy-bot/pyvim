@@ -24,8 +24,24 @@ def edit_esc(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\<esc\>"] = edit_esc
+match_table["\<Esc\>"] = edit_esc
 
+
+"""
+New line in INSERT mode.
+"""
+
+
+def edit_enter(vim: VimEmulator, args: str = "") -> VimEmulator:
+    new_line = vim.buffer[vim.row][vim.col :]
+    vim.buffer[vim.row] = vim.buffer[vim.row][: vim.col]
+    vim.buffer.insert(vim.row + 1, new_line)
+    vim.row += 1
+    vim.col = 0
+    return vim
+
+
+match_table["\<CR\>"] = edit_enter
 
 """
 Insert to buffer.

@@ -7,6 +7,7 @@ Created:  2024-08-18T19:07:50.750Z
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple, List
+import sys, tty, os, termios
 
 if TYPE_CHECKING:
     from .pyvim import VimEmulator, Cursor, Buffer
@@ -285,3 +286,137 @@ def _get_last_cmd_by_tail(vim: VimEmulator, tail_list: List[str]) -> str:
             return vim._cmd[i]
     return ""
 
+
+def get_key() -> str:
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        key_sequence = []
+
+        while True:
+            ch = os.read(fd, 1)
+            if not ch:
+                break
+            key_sequence.append(ch)
+            break
+
+        key_bytes = b"".join(key_sequence)
+
+        key_mappings = {
+            # Arrow keys
+            b"\x1b[A": "<Up>",
+            b"\x1b[B": "<Down>",
+            b"\x1b[C": "<Right>",
+            b"\x1b[D": "<Left>",
+            # Shift + Arrow keys
+            b"\x1b[1;2A": "<S-Up>",
+            b"\x1b[1;2B": "<S-Down>",
+            b"\x1b[1;2C": "<S-Right>",
+            b"\x1b[1;2D": "<S-Left>",
+            # Control + Arrow keys
+            b"\x1b[1;5A": "<C-Up>",
+            b"\x1b[1;5B": "<C-Down>",
+            b"\x1b[1;5C": "<C-Right>",
+            b"\x1b[1;5D": "<C-Left>",
+            # Function keys F1-F12
+            b"\x1bOP": "<F1>",
+            b"\x1bOQ": "<F2>",
+            b"\x1bOR": "<F3>",
+            b"\x1bOS": "<F4>",
+            b"\x1b[15~": "<F5>",
+            b"\x1b[17~": "<F6>",
+            b"\x1b[18~": "<F7>",
+            b"\x1b[19~": "<F8>",
+            b"\x1b[20~": "<F9>",
+            b"\x1b[21~": "<F10>",
+            b"\x1b[23~": "<F11>",
+            b"\x1b[24~": "<F12>",
+            # Home, End, Insert, Delete, Page Up, Page Down
+            b"\x1b[H": "<Home>",
+            b"\x1b[F": "<End>",
+            b"\x1b[2~": "<Insert>",
+            b"\x1b[3~": "<Del>",
+            b"\x1b[5~": "<PageUp>",
+            b"\x1b[6~": "<PageDown>",
+            # Tab and Backspace
+            b"\x7f": "<BS>",
+            b"\t": "<Tab>",
+            # Escape
+            b"\x1b": "<Esc>",
+            # Enter
+            b"\r": "<CR>",
+            b"\n": "<NL>",
+            # Space
+            b" ": "<Space>",
+        }
+
+        # Check if the key sequence matches any in the key_mappings
+        if key_bytes in key_mappings:
+            return key_mappings[key_bytes]
+        elif key_bytes.startswith(b"\x1b"):
+            # Possible Alt/Meta key combinations
+            if len(key_bytes) == 2:
+                return f"<M-{chr(key_bytes[1])}>"
+            else:
+                # Handle other special cases if needed
+                return "<Unknown>"
+        elif len(key_bytes) == 1:
+            ch = key_bytes[0]
+            # Control characters (ASCII control codes)
+            if ch < 32 or ch == 127:
+                control_mappings = {
+                    0: "<Nul>",
+                    1: "<C-A>",
+                    2: "<C-B>",
+                    3: "<C-C>",
+                    4: "<C-D>",
+                    5: "<C-E>",
+                    6: "<C-F>",
+                    7: "<C-G>",
+                    8: "<BS>",
+                    9: "<Tab>",
+                    10: "<NL>",
+                    11: "<C-K>",
+                    12: "<C-L>",
+                    13: "<CR>",
+                    14: "<C-N>",
+                    15: "<C-O>",
+                    16: "<C-P>",
+                    17: "<C-Q>",
+                    18: "<C-R>",
+                    19: "<C-S>",
+                    20: "<C-T>",
+                    21: "<C-U>",
+                    22: "<C-V>",
+                    23: "<C-W>",
+                    24: "<C-X>",
+                    25: "<C-Y>",
+                    26: "<C-Z>",
+                    27: "<Esc>",
+                    28: "<C-\>",
+                    29: "<C-]>",
+                    30: "<C-6>",
+                    31: "<C-/>",
+                    127: "<Del>",
+                }
+                return control_mappings.get(ch, "<Unknown>")
+            else:
+                return chr(ch)
+        else:
+            return "<Unknown>"
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+
+# Example usage
+if __name__ == "__main__":
+    try:
+        print("Press keys (Press <Esc> to exit):")
+        while True:
+            key = getkey()
+            print(f"You pressed: {key}")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("Exiting.")

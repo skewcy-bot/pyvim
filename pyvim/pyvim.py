@@ -12,7 +12,7 @@ import re
 
 from .x_mode import match_table as x_mode_match_table
 from .i_mode import match_table as i_mode_match_table
-from .comms import _is_out_of_bounds
+from .comms import _is_out_of_bounds, get_key
 
 match_table: Dict[str, Dict[str, Callable]] = {
     "x": x_mode_match_table,
@@ -30,6 +30,9 @@ class bcolors:
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
+
+
+REFRESH_RATE = 1
 
 
 """
@@ -76,8 +79,30 @@ class Screen:
         self.lines = lines
 
 
+"""
+Vim emulator.
+
+data: str
+    The initial buffer content.
+row: int
+    The initial cursor row.
+col: int
+    The initial cursor column.
+Params:
+    - verbose: print command and buffer after each command
+    - animation: print buffer after each command
+    - interactive: wait for user input after each command
+"""
+
+
 class VimEmulator:
-    def __init__(self, data: str, row: int = 0, col: int = 0) -> None:
+    def __init__(
+        self,
+        data: str,
+        row: int = 0,
+        col: int = 0,
+        params: Optional[Dict[str, bool]] = None,
+    ) -> None:
         self._buffer = Buffer(data=data)
         self._cursor = Cursor(row, col, self._buffer)
         self._screen = Screen(top=0, lines=self.length)
@@ -86,9 +111,12 @@ class VimEmulator:
 
         self.mode = "x"  ## x: normal, i: insert, v: visual, r: replace, c: command
 
-        self.verbose = True
-        self.gif = False
+        if params is None:
+            params = {}
 
+        self.verbose = params.get("verbose", True)
+        self.gif = params.get("gif", False)
+        self.sleep_time = params.get("sleep_time", 1)
         self._cmd: list[str] = []
 
     width = delegate_property("_buffer", "width")
@@ -103,6 +131,20 @@ class VimEmulator:
     def __setitem__(self, key, value):
         self._buffer.data[key] = value
 
+    def run(self) -> None:
+        self.gif = True
+        self.sleep_time = 0
+        self.print("pyvim 💕", (0, 0))
+
+        command = ""
+        while True:
+            command += get_key()
+            ret = self.exec(command)
+            if ret:
+                command = ""
+            elif command.endswith("<Esc>"):
+                command = ""
+
     def exec(self, commands: str) -> bool:
         if self.verbose:
             self.print(commands, (0, 0))
@@ -114,10 +156,12 @@ class VimEmulator:
                 command(self, commands[index : index + new_index])
                 if self.verbose:
                     self.print(commands, (index, index + new_index))
+                    if self.gif:
+                        sleep(self.sleep_time)
                 self._cmd.append(commands[index : index + new_index])
                 index += new_index
             else:
-                assert False, f"Invalid command: {commands[index:]}"
+                return False
         return True
 
     def match(self, commands: str) -> Tuple[Optional[Callable], int]:
@@ -160,6 +204,10 @@ class VimEmulator:
             + "-" * (max([len(line) for line in _msg.data]) + _line_number_width + 1)
             + bcolors.ENDC
         )
+
+        if self.gif:
+            print(chr(27) + "[2J")
+
         print("Exec: ", _comm)
 
         print(_split)
@@ -177,10 +225,6 @@ class VimEmulator:
             print("".join(_msg.data[_line_index]))
 
         print(_split)
-
-        if self.gif:
-            sleep(1)
-            print(chr(27) + "[2J")
 
     def __del__(self):
         print("\n\n")
