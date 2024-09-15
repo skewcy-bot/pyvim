@@ -6,12 +6,18 @@ Created:  2024-07-21T16:32:14.272Z
 """
 
 from time import sleep
-from typing import Callable, Tuple, Optional
+from typing import Callable, Tuple, Optional, Dict
 from copy import deepcopy
 import re
 
-from .normal.motion import match_table
+from .x_mode import match_table as x_mode_match_table
+from .i_mode import match_table as i_mode_match_table
 from .comms import _is_out_of_bounds
+
+match_table: Dict[str, Dict[str, Callable]] = {
+    "x": x_mode_match_table,
+    "i": i_mode_match_table,
+}
 
 
 class bcolors:
@@ -115,13 +121,13 @@ class VimEmulator:
         return True
 
     def match(self, commands: str) -> Tuple[Optional[Callable], int]:
-        for pattern, command in match_table.items():
+        for pattern, command in match_table[self.mode].items():
             result = re.search("^" + pattern, commands)
             if result:
                 return command, result.end()
         return None, 0
 
-    def print(self, cl: str, comm_range: tuple[int, int]) -> None:
+    def print(self, cl: str, comm_range: tuple[int, int], cursor: bool = True) -> None:
         _comm = (
             cl[: comm_range[0]]
             + bcolors.FAIL
@@ -131,11 +137,21 @@ class VimEmulator:
         )
 
         _msg = deepcopy(self._buffer)
-        if self.mode == "x":
+
+        ## Set cursor color
+        if cursor and (self.mode == "x" or self.mode == "i"):
+            if self.mode == "x":
+                _cursor_color = 4  # blue
+            elif self.mode == "i":
+                _cursor_color = 2  # green
             if not len(_msg.data[self.row]):
-                _msg.data[self.row].append("█")
+                _msg.data[self.row].append(f"\033[34;4{_cursor_color}m \033[m")
             else:
-                _msg.data[self._cursor.row][self._cursor.col] = "█"
+                _msg.data[self._cursor.row][self._cursor.col] = (
+                    f"\033[34;4{_cursor_color}m"
+                    + _msg.data[self._cursor.row][self._cursor.col]
+                    + "\033[m"
+                )
 
         _line_number_width = len(str(self._screen.top + self._screen.lines))
 

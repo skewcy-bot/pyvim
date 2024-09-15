@@ -118,3 +118,6 @@ if __name__ == "__main__":
     # VimEmulator(msg, 0, 0).exec("zt")
     # VimEmulator(msg, 0, 0).exec("zz")
     # VimEmulator(msg, 0, 0).exec("zb")
+
+    ## //ANCHOR - Test for insert mode
+    VimEmulator("hello world\n", 0, 0).exec("i114514<esc>0ihaha<esc>")

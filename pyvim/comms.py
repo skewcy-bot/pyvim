@@ -284,3 +284,4 @@ def _get_last_cmd_by_tail(vim: VimEmulator, tail_list: List[str]) -> str:
         if vim._cmd[i][-1] in tail_list:
             return vim._cmd[i]
     return ""
+

@@ -9,6 +9,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import TYPE_CHECKING, Dict, Callable
 
+
 from ..comms import (
     _is_out_of_bounds,
     _is_word_start,
@@ -25,10 +26,12 @@ if TYPE_CHECKING:
     from ..pyvim import VimEmulator
 
 
+match_table: Dict[str, Callable] = {}
+
+
 """
 Match table for NORMAL commands in REGEX.
 """
-match_table: Dict[str, Callable] = {}
 
 
 def motion_l(vim: VimEmulator, args: str = "") -> VimEmulator:
