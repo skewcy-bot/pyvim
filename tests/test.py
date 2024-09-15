@@ -5,17 +5,14 @@ Desc: description
 Created:  2024-07-21T18:28:43.626Z
 """
 
-from re import sub
 import sys
 import os
-import re
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from vim_emulator import VimEmulator
 
 import subprocess
 import time
-import os
 
 
 class VimSubprocessEmulator:
@@ -47,21 +44,21 @@ class VimSubprocessEmulator:
         with open(self.filename, "r") as f:
             return f.read()
 
-    def get_cursor_position(self) -> tuple:
-        self.process.stdin.write(':echo getpos(".")\n\n')
-        self.process.stdin.flush()
-        time.sleep(0.5)
-        while True:
-            line = self.process.stdout.readline()
-            # print(line)
-            if "[0" in line or "0]" in line:
-                position = re.findall(r"\d+", line)
-                break
-        return position[1], position[2]
+    # def get_cursor_position(self) -> tuple:
+    #     self.process.stdin.write(':echo getpos(".")\n\n')
+    #     self.process.stdin.flush()
+    #     time.sleep(0.5)
+    #     while True:
+    #         line = self.process.stdout.readline()
+    #         # print(line)
+    #         if "[0" in line or "0]" in line:
+    #             position = re.findall(r"\d+", line)
+    #             break
+    #     return position[1], position[2]
 
     def print(self) -> None:
-        cursor_position = self.get_cursor_position()
-        print(cursor_position)
+        # cursor_position = self.get_cursor_position()
+        # print(cursor_position)
 
         content = self.get_buffer_content()
         print(content)
@@ -78,7 +75,7 @@ class VimSubprocessEmulator:
 
 # Example usage:
 if __name__ == "__main__":
-    initial_data = "Hello\nWorld\nThis is a test"
+    initial_data = "hello\nworld\nhahahahaha"
     emulator = VimSubprocessEmulator(initial_data)
 
     emulator.print()
