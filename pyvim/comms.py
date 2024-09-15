@@ -8,6 +8,7 @@ Created:  2024-08-18T19:07:50.750Z
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple, List
 import sys, tty, os, termios
+import copy
 
 if TYPE_CHECKING:
     from .pyvim import VimEmulator, Cursor, Buffer
@@ -287,7 +288,92 @@ def _get_last_cmd_by_tail(vim: VimEmulator, tail_list: List[str]) -> str:
     return ""
 
 
-def get_key() -> str:
+def _update_screen(vim: VimEmulator) -> None:
+    ## //TODO: Check screen size from terminal size
+
+    vim._screen.lines = vim.length
+    vim._screen.cols = max(x for x in vim.width) + 1
+
+    if vim.row < vim._screen.top:
+        vim._screen.top = vim.row
+    if vim.row >= vim._screen.top + vim._screen.lines:
+        vim._screen.top = vim.row - vim._screen.lines + 1
+
+
+class bcolors:
+    HEADER = "\033[95m"
+    OKBLUE = "\033[94m"
+    OKCYAN = "\033[96m"
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+
+
+def _print(
+    vim: VimEmulator, cl: str, comm_range: tuple[int, int], cursor: bool = True
+) -> None:
+    _comm = (
+        cl[: comm_range[0]]
+        + bcolors.FAIL
+        + cl[comm_range[0] : comm_range[1]]
+        + bcolors.ENDC
+        + cl[comm_range[1] :]
+    )
+
+    _msg = copy.deepcopy(vim._buffer)
+
+    ## Set cursor color
+    if cursor and (vim.mode == "x" or vim.mode == "i"):
+        if vim.mode == "x":
+            _cursor_color = 4  # blue
+        elif vim.mode == "i":
+            _cursor_color = 2  # green
+        if not len(_msg.data[vim.row]) or vim._cursor.col == len(_msg.data[vim.row]):
+            _msg.data[vim.row].append(f"\033[34;4{_cursor_color}m \033[m")
+        else:
+            _msg.data[vim._cursor.row][vim._cursor.col] = (
+                f"\033[34;4{_cursor_color}m"
+                + _msg.data[vim._cursor.row][vim._cursor.col]
+                + "\033[m"
+            )
+    _line_number_width = len(str(vim._screen.top + vim._screen.lines))
+    _split = (
+        bcolors.OKBLUE
+        + "-" * (max([len(line) for line in _msg.data]) + _line_number_width + 1)
+        + bcolors.ENDC
+    )
+    if vim.gif:
+        print(chr(27) + "[2J")
+    print("Exec: ", _comm)
+    print(_split)
+    for _line_index in range(
+        vim._screen.top, min(vim._screen.top + vim._screen.lines, len(_msg.data))
+    ):
+        print(
+            bcolors.WARNING
+            + str(_line_index + 1)
+            + " " * (_line_number_width - len(str(_line_index)))
+            + bcolors.ENDC,
+            end=" ",
+        )
+        print("".join(_msg.data[_line_index]))
+    print(_split)
+
+
+def _save(vim: VimEmulator, file_path: str) -> None:
+    with open(file_path, "w") as f:
+        f.write(str(vim._buffer))
+
+
+def _load(vim: VimEmulator, file_path: str) -> None:
+    with open(file_path, "r") as f:
+        vim._buffer = Buffer(f.read())
+
+
+def _get_key() -> str:
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:

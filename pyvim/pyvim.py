@@ -12,24 +12,16 @@ import re
 
 from .x_mode import match_table as x_mode_match_table
 from .i_mode import match_table as i_mode_match_table
-from .comms import _is_out_of_bounds, get_key
+from .c_mode import match_table as c_mode_match_table
+from .r_mode import match_table as r_mode_match_table
+from .comms import _is_out_of_bounds, _get_key, _print, _load, _save, _update_screen
 
 match_table: Dict[str, Dict[str, Callable]] = {
     "x": x_mode_match_table,
     "i": i_mode_match_table,
+    "c": c_mode_match_table,
+    "r": r_mode_match_table,
 }
-
-
-class bcolors:
-    HEADER = "\033[95m"
-    OKBLUE = "\033[94m"
-    OKCYAN = "\033[96m"
-    OKGREEN = "\033[92m"
-    WARNING = "\033[93m"
-    FAIL = "\033[91m"
-    ENDC = "\033[0m"
-    BOLD = "\033[1m"
-    UNDERLINE = "\033[4m"
 
 
 REFRESH_RATE = 1
@@ -117,6 +109,7 @@ class VimEmulator:
         self.verbose = params.get("verbose", True)
         self.gif = params.get("gif", False)
         self.sleep_time = params.get("sleep_time", 1)
+        self.file_path = params.get("file_path", "output.txt")
         self._cmd: list[str] = []
 
     width = delegate_property("_buffer", "width")
@@ -131,14 +124,18 @@ class VimEmulator:
     def __setitem__(self, key, value):
         self._buffer.data[key] = value
 
-    def run(self) -> None:
+    def run(self, file_path: Optional[str] = None) -> None:
         self.gif = True
         self.sleep_time = 0
-        self.print("pyvim 💕", (0, 0))
+
+        if file_path:
+            self.file_path = file_path
+
+        _print(self, "pyvim 💕", (0, 0))
 
         command = ""
         while True:
-            command += get_key()
+            command += _get_key()
             ret = self.exec(command)
             if ret:
                 command = ""
@@ -147,7 +144,7 @@ class VimEmulator:
 
     def exec(self, commands: str) -> bool:
         if self.verbose:
-            self.print(commands, (0, 0))
+            _print(self, commands, (0, 0))
 
         index = 0
         while index < len(commands):
@@ -155,7 +152,8 @@ class VimEmulator:
             if command:
                 command(self, commands[index : index + new_index])
                 if self.verbose:
-                    self.print(commands, (index, index + new_index))
+                    _update_screen(self)
+                    _print(self, commands, (index, index + new_index))
                     if self.gif:
                         sleep(self.sleep_time)
                 self._cmd.append(commands[index : index + new_index])
@@ -170,61 +168,6 @@ class VimEmulator:
             if result:
                 return command, result.end()
         return None, 0
-
-    def print(self, cl: str, comm_range: tuple[int, int], cursor: bool = True) -> None:
-        _comm = (
-            cl[: comm_range[0]]
-            + bcolors.FAIL
-            + cl[comm_range[0] : comm_range[1]]
-            + bcolors.ENDC
-            + cl[comm_range[1] :]
-        )
-
-        _msg = deepcopy(self._buffer)
-
-        ## Set cursor color
-        if cursor and (self.mode == "x" or self.mode == "i"):
-            if self.mode == "x":
-                _cursor_color = 4  # blue
-            elif self.mode == "i":
-                _cursor_color = 2  # green
-            if not len(_msg.data[self.row]):
-                _msg.data[self.row].append(f"\033[34;4{_cursor_color}m \033[m")
-            else:
-                _msg.data[self._cursor.row][self._cursor.col] = (
-                    f"\033[34;4{_cursor_color}m"
-                    + _msg.data[self._cursor.row][self._cursor.col]
-                    + "\033[m"
-                )
-
-        _line_number_width = len(str(self._screen.top + self._screen.lines))
-
-        _split = (
-            bcolors.OKBLUE
-            + "-" * (max([len(line) for line in _msg.data]) + _line_number_width + 1)
-            + bcolors.ENDC
-        )
-
-        if self.gif:
-            print(chr(27) + "[2J")
-
-        print("Exec: ", _comm)
-
-        print(_split)
-
-        for _line_index in range(
-            self._screen.top, self._screen.top + self._screen.lines
-        ):
-            print(
-                bcolors.WARNING
-                + str(_line_index + 1)
-                + " " * (_line_number_width - len(str(_line_index)))
-                + bcolors.ENDC,
-                end=" ",
-            )
-            print("".join(_msg.data[_line_index]))
-
-        print(_split)
 
     def __del__(self):
         print("\n\n")

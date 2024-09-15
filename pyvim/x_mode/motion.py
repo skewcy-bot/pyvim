@@ -48,6 +48,7 @@ Move the cursor to the previous line.
 
 
 def motion_k(vim: VimEmulator, args: str = "") -> VimEmulator:
+    # //TODO: Check if cursor output bound
     vim.row = max(0, vim.row - 1)
     return vim
 

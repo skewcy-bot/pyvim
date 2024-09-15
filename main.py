@@ -122,4 +122,16 @@ if __name__ == "__main__":
     ## //ANCHOR - Test for insert mode
     # VimEmulator("hello world\n", 0, 0, {"gif": True}).exec("i114514<Esc>0ihaha<Esc>")
 
+    ## //ANCHOR - Test r
+    # VimEmulator("hello world\n", 0, 0).exec("r1wr2")
+
+    ## //ANCHOR - Test INTERACTIVE MODE
     VimEmulator("hello world\n", 0, 0).run()
+
+    ## //ANCHOR - Test J
+    # VimEmulator("hello  \n world", 0, 0).exec("J")
+    # VimEmulator("hello  \nworld", 0, 0).exec("J")
+    # VimEmulator("hello \n  world", 0, 0).exec("J")
+    # VimEmulator("hello\n  world", 0, 0).exec("J")
+    # VimEmulator("hello\nworld", 0, 0).exec("J")
+    # VimEmulator("hello\n\nworld", 0, 0).exec("JJ")
