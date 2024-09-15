@@ -6,7 +6,7 @@ Created:  2024-08-18T19:07:50.750Z
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple, List
 
 if TYPE_CHECKING:
     from .pyvim import VimEmulator, Cursor, Buffer
@@ -270,3 +270,17 @@ def _get_random_buffer(width: int = 15, length: int = 8) -> str:
             for i in range(1, length)
         ]
     )
+
+
+def _get_last_cmd_by_head(vim: VimEmulator, head_list: List[str]) -> str:
+    for i in range(len(vim._cmd) - 1, -1, -1):
+        if vim._cmd[i][0] in head_list:
+            return vim._cmd[i]
+    return ""
+
+
+def _get_last_cmd_by_tail(vim: VimEmulator, tail_list: List[str]) -> str:
+    for i in range(len(vim._cmd) - 1, -1, -1):
+        if vim._cmd[i][-1] in tail_list:
+            return vim._cmd[i]
+    return ""

@@ -68,3 +68,53 @@ if __name__ == "__main__":
 
     ## //ANCHOR - Test {
     # VimEmulator("hello world\n    \n hahahahaha\n\n \naasdf", -1, -1).exec("{{{{")
+
+    ## //ANCHOR - Test ge
+    # VimEmulator("hello world\n\n   \n hahahahaha", 0, 5).exec("ge")
+    # VimEmulator("hello world\n\n\n   \n hahahahaha", -1, -1).exec("gegege")
+
+    ## //ANCHOR - Test gE
+    # VimEmulator("hello world\n\n\n hahahahaha", 0, 5).exec("gE")
+    # VimEmulator("hel!!lo wo!!rld\n\n\n   \n ha!!hahahaha", -1, -1).exec("gegEgegEge")
+
+    ## //ANCHOR - Test g_
+    # VimEmulator("hello world !!  \n\n\n hahahahaha", 0, 5).exec("g_")
+
+    ## //ANCHOR - Test gg
+    # VimEmulator("hello world !!  \n\n\n hahahahaha", -1, 3).exec("gg")
+
+    ## //ANCHOR - Test G
+    # VimEmulator("hello world !!  \n\n\n hahahahaha", 0, 3).exec("G")
+
+    ## //ANCHOR - Test \d+gg
+    # VimEmulator("hello world !!  \n\n\n hahahahaha", -1, 3).exec("10gg")
+    # VimEmulator("hello world !!  \n\n\n hahahahaha", -1, 3).exec("3gg")
+    # VimEmulator("hello world !!  \n\n\n hahahahaha", -1, 3).exec("0gg")
+
+    ## //ANCHOR - Test f
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, 0).exec("f f!f ")
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", -1, 0).exec("f f f ")
+
+    ## //ANCHOR - Test F
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, -1).exec("F f!f ")
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", -1, -1).exec("F f f ")
+
+    ## //ANCHOR - Test t
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, 0).exec("t t t ")
+
+    ## //ANCHOR - Test T
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, -1).exec("T!T!T!")
+
+    ## //ANCHOR - Test ;
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, 0).exec("f ;;")
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, -1).exec("F ;;")
+
+    ## //ANCHOR - Test ,
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, 0).exec("F ,,,,")
+    # VimEmulator("hello world !!  \n\n\n   hahahahaha", 0, -1).exec("f,,,,")
+
+    ## //ANCHOR - Test z
+    # msg = "".join([f"{i}\n" for i in range(10)])
+    # VimEmulator(msg, 0, 0).exec("zt")
+    # VimEmulator(msg, 0, 0).exec("zz")
+    # VimEmulator(msg, 0, 0).exec("zb")

@@ -54,18 +54,18 @@ class Buffer:
 
 
 class Cursor:
-    def __init__(self, row: int, col: int, buffer: Buffer) -> None:
-        if row < 0:
+    def __init__(self, row: int, col: int, buffer: Optional[Buffer] = None) -> None:
+        if row < 0 and buffer:
             row = buffer.length + row
         self.row = row
 
-        if col < 0:
+        if col < 0 and buffer:
             col = buffer.width[row] + col
         self.col = col
 
 
 class Screen:
-    def __init__(self, top=0, lines=5) -> None:
+    def __init__(self, top: int = 0, lines: int = 5) -> None:
         self.top = top
         self.lines = lines
 
@@ -82,6 +82,8 @@ class VimEmulator:
 
         self.verbose = True
         self.gif = False
+
+        self._cmd: list[str] = []
 
     width = delegate_property("_buffer", "width")
     length = delegate_property("_buffer", "length")
@@ -103,9 +105,10 @@ class VimEmulator:
         while index < len(commands):
             command, new_index = self.match(commands[index:])
             if command:
-                command(self, *commands[index + 1 : index + new_index])
+                command(self, commands[index : index + new_index])
                 if self.verbose:
                     self.print(commands, (index, index + new_index))
+                self._cmd.append(commands[index : index + new_index])
                 index += new_index
             else:
                 assert False, f"Invalid command: {commands[index:]}"
