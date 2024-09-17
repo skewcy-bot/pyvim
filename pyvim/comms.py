@@ -331,7 +331,9 @@ def _print(
             _cursor_color = 4  # blue
         elif vim.mode == "i":
             _cursor_color = 2  # green
-        if not len(_msg.data[vim.row]) or vim._cursor.col == len(_msg.data[vim.row]):
+        elif vim.mode == "r":
+            _cursor_color = 1  # red
+        if not len(_msg.data[vim.row]) or vim._cursor.col >= len(_msg.data[vim.row]):
             _msg.data[vim.row].append(f"\033[34;4{_cursor_color}m \033[m")
         else:
             _msg.data[vim._cursor.row][vim._cursor.col] = (
@@ -361,6 +363,7 @@ def _print(
         )
         print("".join(_msg.data[_line_index]))
     print(_split)
+    print(f"mode: {vim.mode}, cursor: {vim.row},{vim.col}")
 
 
 def _save(vim: VimEmulator, file_path: str) -> None:

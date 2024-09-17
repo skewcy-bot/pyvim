@@ -36,6 +36,8 @@ Match table for NORMAL commands in REGEX.
 
 def motion_l(vim: VimEmulator, args: str = "") -> VimEmulator:
     vim.col = min(vim.col + 1, vim.width[vim.row] - 1)
+    if _is_empty_line(vim):
+        vim.col = 0
     return vim
 
 
@@ -100,6 +102,10 @@ Move the cursor to the left.
 
 def motion_h(vim: VimEmulator, args: str = "") -> VimEmulator:
     vim.col = max(0, vim.col - 1)
+    if vim.col >= vim.width[vim.row]:
+        vim.col = vim.width[vim.row] - 1
+    if _is_empty_line(vim):
+        vim.col = 0
     return vim
 
 

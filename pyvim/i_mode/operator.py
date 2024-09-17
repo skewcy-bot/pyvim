@@ -64,6 +64,7 @@ def operator_input(vim: VimEmulator, args: str = "") -> VimEmulator:
     )
 
     vim.col += 1
+    vim.width[vim.row] += 1
     return vim
 
 

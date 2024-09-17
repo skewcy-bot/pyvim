@@ -7,6 +7,7 @@ Created:  2024-09-15T01:40:01.734Z
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Callable, List
+from ..comms import _is_empty_line
 
 if TYPE_CHECKING:
     from ..pyvim import VimEmulator
@@ -56,6 +57,10 @@ Replace a single character.
 
 def operator_r(vim: VimEmulator, args: str = "") -> VimEmulator:
     replaced_char = args[1]
+    if _is_empty_line(vim):
+        return vim
+    if vim.col >= vim.width[vim.row]:
+        vim.col = vim.width[vim.row] - 1
     cursor = vim._cursor
     vim[cursor.row][cursor.col] = replaced_char
     return vim
