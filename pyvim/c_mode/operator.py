@@ -22,8 +22,9 @@ Change to NORMAL mode.
 
 
 def operator_w(vim: VimEmulator, args: str = "") -> VimEmulator:
-    _save(vim, vim.file_path)
-    vim.mode = "NORMAL"
+    if not vim.web_mode:
+        _save(vim, vim.file_path)
+    vim.mode = "x"
     return vim
 
 
@@ -35,7 +36,10 @@ Quit
 
 
 def operator_q(vim: VimEmulator, args: str = "") -> VimEmulator:
-    exit(0)
+    if not vim.web_mode:
+        exit(0)
+    vim.mode = "x"
+    return vim
 
 
 match_table["q\!?<CR>"] = operator_q
@@ -46,9 +50,23 @@ Save and quit
 
 
 def operator_wq(vim: VimEmulator, args: str = "") -> VimEmulator:
-    _save(vim, vim.file_path)
-    vim.mode = "NORMAL"
-    exit(0)
+    if not vim.web_mode:
+        _save(vim, vim.file_path)
+        exit(0)
+    vim.mode = "x"
+    return vim
 
 
 match_table["wq\!?<CR>"] = operator_wq
+
+"""
+Quit command mode.
+"""
+
+
+def operator_esc(vim: VimEmulator, args: str = "") -> VimEmulator:
+    vim.mode = "x"
+    return vim
+
+
+match_table[".*<Esc>"] = operator_esc

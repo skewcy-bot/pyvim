@@ -14,6 +14,7 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 vim_instances: Dict[str, VimEmulator] = {}
+command_buffers: Dict[str, str] = {}  # New dictionary to store accumulated commands
 
 
 @app.route("/")
@@ -30,6 +31,9 @@ def serve_static(filename):
 def handle_connect():
     session_id = request.sid
     vim_instances[session_id] = VimEmulator("hello world\n", 0, 0, web_mode=True)
+    command_buffers[session_id] = (
+        ""  # Initialize an empty command buffer for this session
+    )
     emit("update", {"output": "Press any key to start"})
 
 
@@ -37,7 +41,18 @@ def handle_connect():
 def handle_command(command):
     session_id = request.sid
     vim = vim_instances[session_id]
-    output = vim.exec(command)
+
+    # Append the new command to the existing buffer
+    command_buffers[session_id] += command
+
+    # Try to execute the accumulated command
+    ret, output = vim.exec(command_buffers[session_id])
+
+    if ret:
+        command_buffers[session_id] = ""
+    elif command_buffers[session_id].endswith("<Esc>"):
+        command_buffers[session_id] = ""
+
     emit("update", {"output": output})
 
 

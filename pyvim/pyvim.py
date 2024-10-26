@@ -138,16 +138,20 @@ class VimEmulator:
         command = ""
         while True:
             command += _get_key()
-            ret = self.exec(command)
+            ret, _ = self.exec(command)
             if ret:
                 command = ""
             elif command.endswith("<Esc>"):
                 command = ""
 
-    def exec(self, commands: str) -> Union[bool, str]:
-        output = ""
-        if self.verbose:
-            output = _print(self, commands, (0, 0))
+    """
+    Return a tuple of (bool, str).
+    bool: True if the command is executed, False if the command is not executed.
+    str: The output of the command for web mode.
+    """
+
+    def exec(self, commands: str) -> Tuple[bool, str]:
+        output = _print(self, commands, (0, 0))
 
         index = 0
         while index < len(commands):
@@ -162,8 +166,8 @@ class VimEmulator:
                 self._cmd.append(commands[index : index + new_index])
                 index += new_index
             else:
-                return False if not self.web_mode else output
-        return True if not self.web_mode else output
+                return False, output
+        return True, output
 
     def match(self, commands: str) -> Tuple[Optional[Callable], int]:
         for pattern, command in match_table[self.mode].items():

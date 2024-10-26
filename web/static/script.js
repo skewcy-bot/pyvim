@@ -2,49 +2,53 @@ const socket = io();
 const terminal = document.getElementById('terminal');
 
 document.addEventListener('keydown', (event) => {
+    event.preventDefault(); // Prevent default browser behavior
+    
     let key = event.key;
     let modifiers = '';
 
-    if (event.ctrlKey) {
-        modifiers += 'C-';
+    if (event.ctrlKey && key !== 'Control') modifiers += 'C-';
+    if (event.altKey && key !== 'Alt') modifiers += 'M-';
+    if (event.metaKey && key !== 'Meta') modifiers += 'D-'; // For Command key on Mac
+    if (event.shiftKey && key.length > 1) modifiers += 'S-';
+
+    // Handle special keys
+    switch (key) {
+        case 'Escape': key = '<Esc>'; break;
+        case 'Enter': key = '<CR>'; break;
+        case 'Backspace': key = '<BS>'; break;
+        case 'Tab': key = '<Tab>'; break;
+        case ' ': key = '<Space>'; break;
+        case 'ArrowLeft': key = '<Left>'; break;
+        case 'ArrowRight': key = '<Right>'; break;
+        case 'ArrowUp': key = '<Up>'; break;
+        case 'ArrowDown': key = '<Down>'; break;
+        case 'Home': key = '<Home>'; break;
+        case 'End': key = '<End>'; break;
+        case 'PageUp': key = '<PageUp>'; break;
+        case 'PageDown': key = '<PageDown>'; break;
+        case 'Delete': key = '<Del>'; break;
+        case 'Insert': key = '<Insert>'; break;
     }
-    if (event.altKey) {
-        modifiers += 'M-';
+
+    // Handle function keys
+    if (key.startsWith('F') && key.length > 1) {
+        key = `<${key}>`;
     }
-    if (event.shiftKey) {
+
+    // Handle modifier keys when pressed alone
+    if (['Control', 'Alt', 'Shift', 'Meta'].includes(key)) {
+        return; // Don't send modifier keys when pressed alone
+    }
+
+    // Handle uppercase letters
+    if (key.length === 1 && key.match(/[A-Z]/)) {
         modifiers += 'S-';
+        key = key.toLowerCase();
     }
 
-    if (event.key === 'Escape') {
-        key = '<Esc>';
-    } else if (event.key === 'Enter') {
-        key = '<CR>';
-    } else if (event.key === 'Backspace') {
-        key = '<BS>';
-    } else if (event.key === 'Tab') {
-        key = '<Tab>';
-    } else if (event.key === ' ') {
-        key = '<Space>';
-    } else if (event.key.startsWith('Arrow')) {
-        key = `<${event.key.slice(5)}>`;
-    } else if (event.key.startsWith('F') && event.key.length > 1) {
-        key = `<${event.key}>`;
-    } else if (event.key === 'Home') {
-        key = '<Home>';
-    } else if (event.key === 'End') {
-        key = '<End>';
-    } else if (event.key === 'Insert') {
-        key = '<Insert>';
-    } else if (event.key === 'Delete') {
-        key = '<Del>';
-    } else if (event.key === 'PageUp') {
-        key = '<PageUp>';
-    } else if (event.key === 'PageDown') {
-        key = '<PageDown>';
-    }
-
-    socket.emit('command', modifiers + key);
-    event.preventDefault();
+    const command = modifiers + key;
+    socket.emit('command', command);
 });
 
 socket.on('update', (data) => {

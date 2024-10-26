@@ -751,8 +751,33 @@ match_table["z[t|z|b]"] = motion_z
 
 
 """
+Delete the character under the cursor.
+"""
+
+
+def motion_x(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if _is_empty_line(vim):
+        return vim
+    if _is_out_of_bounds(vim):
+        return vim
+
+    vim.buffer[vim.row] = (
+        vim.buffer[vim.row][: vim.col] + vim.buffer[vim.row][vim.col + 1 :]
+    )
+    if vim.col == vim.width[vim.row] - 1 and vim.width[vim.row] > 1:
+        vim.col -= 1
+    vim.width[vim.row] -= 1
+
+    return vim
+
+
+match_table["x"] = motion_x
+
+
+"""
 Repeat the motion k times. 
 
+!!!! NOTE !!!!
 Make sure this command in at the end of match_table to get all the motions.
 """
 
@@ -780,26 +805,3 @@ def motion_num_motion(vim: VimEmulator, args: str = "") -> VimEmulator:
 
 
 match_table[f"\d+({'|'.join(match_table.keys())})"] = motion_num_motion
-
-"""
-Delete the character under the cursor.
-"""
-
-
-def motion_x(vim: VimEmulator, args: str = "") -> VimEmulator:
-    if _is_empty_line(vim):
-        return vim
-    if _is_out_of_bounds(vim):
-        return vim
-
-    vim.buffer[vim.row] = (
-        vim.buffer[vim.row][: vim.col] + vim.buffer[vim.row][vim.col + 1 :]
-    )
-    if vim.col == vim.width[vim.row] - 1 and vim.width[vim.row] > 1:
-        vim.col -= 1
-    vim.width[vim.row] -= 1
-
-    return vim
-
-
-match_table["x"] = motion_x
