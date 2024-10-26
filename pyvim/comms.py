@@ -404,16 +404,22 @@ def _print(
         elif vim.width[vim.row] == 0:
             _msg.data[vim.row] = [f"\033[34;4{_cursor_color}m \033[0m"]
         elif vim.col >= vim.width[vim.row]:
-            char = _msg.data[vim.row][vim.width[vim.row] - 1]
-            _msg.data[vim.row][
-                vim.width[vim.row] - 1
-            ] = f"\033[34;4{_cursor_color}m{char}\033[0m"
+            _msg.data[vim.row].append(f"\033[34;4{_cursor_color}m \033[0m")
         else:
             assert False, "Invalid cursor position"
 
+    if vim.mode == "x":
+        _split_line_color = bcolors.OKBLUE
+    elif vim.mode == "i":
+        _split_line_color = bcolors.OKGREEN
+    elif vim.mode == "c":
+        _split_line_color = bcolors.WARNING
+    else:
+        _split_line_color = bcolors.OKCYAN
+
     _line_number_width = len(str(vim._screen.top + vim._screen.lines))
     _split = (
-        bcolors.OKBLUE
+        _split_line_color
         + "-" * (max([len(line) for line in _msg.data]) + _line_number_width + 1)
         + bcolors.ENDC
     )
