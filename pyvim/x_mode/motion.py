@@ -607,7 +607,7 @@ def motion_num_gg(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\d+[gg|G]"] = motion_num_gg
+match_table["\d+(gg|G)"] = motion_num_gg
 
 
 """
@@ -748,3 +748,60 @@ def motion_z(vim: VimEmulator, args: str = "") -> VimEmulator:
 
 
 match_table["z[t|z|b]"] = motion_z
+
+
+"""
+Delete the character under the cursor.
+"""
+
+
+def motion_x(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if _is_empty_line(vim):
+        return vim
+    if _is_out_of_bounds(vim):
+        return vim
+
+    vim.buffer[vim.row] = (
+        vim.buffer[vim.row][: vim.col] + vim.buffer[vim.row][vim.col + 1 :]
+    )
+    if vim.col == vim.width[vim.row] - 1 and vim.width[vim.row] > 1:
+        vim.col -= 1
+    vim.width[vim.row] -= 1
+
+    return vim
+
+
+match_table["x"] = motion_x
+
+
+"""
+Repeat the motion k times. 
+
+!!!! NOTE !!!!
+Make sure this command in at the end of match_table to get all the motions.
+"""
+
+
+def motion_num_motion(vim: VimEmulator, args: str = "") -> VimEmulator:
+    _repeat_times_str = ""
+    _command_str = ""
+    for i in args:
+        if i.isdigit():
+            _repeat_times_str += i
+        else:
+            _command_str += i
+
+    _repeat_times = int(_repeat_times_str)
+
+    if _command_str not in match_table:
+        print(f"Invalid command: {_command_str}")
+        return vim
+    _command = match_table[_command_str]
+
+    for _ in range(_repeat_times):
+        vim = _command(vim)
+
+    return vim
+
+
+match_table[f"\d+({'|'.join(match_table.keys())})"] = motion_num_motion

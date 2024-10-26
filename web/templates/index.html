@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PyVim Online</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+
+<body>
+    <div class="computer-frame">
+        <div class="controls">
+            <div class="button red"></div>
+            <div class="button yellow"></div>
+            <div class="button green"></div>
+        </div>
+        <div class="screen">
+            <div id="terminal"></div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>
+            <a href="https://github.com/chuanyuxue/pyvim" target="_blank">PyVim</a>
+            by <a href="https://skewcy.com" target="_blank">Chuanyu</a>
+        </p>
+    </footer>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple, List
 import sys, tty, os, termios
 import copy
+import re
 
 if TYPE_CHECKING:
     from .pyvim import VimEmulator, Cursor, Buffer
@@ -54,13 +55,15 @@ Check if the current character is a word character.
     - Out of bounds is not considered a word character.
 """
 
+SPECIAL_CHARS_STR = "~!@#$%^&*()-=+[{]};:'\"\\|,<.>/?"
+
 
 def _is_spec(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
     if cursor is None:
         cursor = vim._cursor
     if _is_out_of_bounds(vim, cursor):
         return False
-    return vim[cursor.row][cursor.col] in "~!@#$%^&*()-=+[{]};:'\"\\|,<.>/?"
+    return vim[cursor.row][cursor.col] in SPECIAL_CHARS_STR
 
 
 """
@@ -312,9 +315,69 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
+def strip_ansi_codes(text):
+    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    return ansi_escape.sub("", text)
+
+
+def ansi_to_html(text):
+    ansi_color_codes = {
+        "30": "color:black;",
+        "31": "color:red;",
+        "32": "color:green;",
+        "33": "color:orange;",  # Changed from yellow to orange
+        "34": "color:blue;",
+        "35": "color:magenta;",
+        "36": "color:cyan;",
+        "37": "color:white;",
+        "40": "background-color:rgba(0,0,0,0.5);",
+        "41": "background-color:rgba(255,0,0,0.5);",
+        "42": "background-color:rgba(0,255,0,0.5);",
+        "43": "background-color:rgba(255,255,0,0.5);",
+        "44": "background-color:rgba(0,0,255,0.5);",
+        "45": "background-color:rgba(255,0,255,0.5);",
+        "46": "background-color:rgba(0,255,255,0.5);",
+        "47": "background-color:rgba(255,255,255,0.5);",
+        "90": "color:gray;",
+        "91": "color:orange;",
+        "92": "color:lightgreen;",
+        "93": "color:grey;",
+        "94": "color:lightblue;",
+        "95": "color:lightmagenta;",
+        "96": "color:lightcyan;",
+        "97": "color:white;",
+    }
+
+    def replace_color(match):
+        codes = match.group(1).split(";")
+        styles = []
+        for code in codes:
+            if code in ansi_color_codes:
+                styles.append(ansi_color_codes[code])
+        if styles:
+            return f'<span style="{" ".join(styles)}">'
+        elif "0" in codes:
+            return "</span>"
+        return ""
+
+    # Replace color codes
+    text = re.sub(r"\033\[([0-9;]+)m", replace_color, text)
+
+    # Replace newlines with <br> tags
+    text = text.replace("\n", "<br>")
+
+    # Remove any remaining ANSI escape sequences
+    text = re.sub(r"\033\[[0-9;]*[a-zA-Z]", "", text)
+
+    # Ensure all spans are closed
+    text += "</span>" * (text.count("<span") - text.count("</span>"))
+
+    return text
+
+
 def _print(
     vim: VimEmulator, cl: str, comm_range: tuple[int, int], cursor: bool = True
-) -> None:
+) -> str:
     _comm = (
         cl[: comm_range[0]]
         + bcolors.FAIL
@@ -333,37 +396,58 @@ def _print(
             _cursor_color = 2  # green
         elif vim.mode == "r":
             _cursor_color = 1  # red
-        if not len(_msg.data[vim.row]) or vim._cursor.col >= len(_msg.data[vim.row]):
-            _msg.data[vim.row].append(f"\033[34;4{_cursor_color}m \033[m")
+        if vim.row < len(_msg.data) and vim._cursor.col < len(_msg.data[vim.row]):
+            char = _msg.data[vim.row][vim._cursor.col]
+            _msg.data[vim.row][
+                vim._cursor.col
+            ] = f"\033[34;4{_cursor_color}m{char}\033[0m"
+        elif vim.width[vim.row] == 0:
+            _msg.data[vim.row] = [f"\033[34;4{_cursor_color}m \033[0m"]
+        elif vim.col >= vim.width[vim.row]:
+            _msg.data[vim.row].append(f"\033[34;4{_cursor_color}m \033[0m")
         else:
-            _msg.data[vim._cursor.row][vim._cursor.col] = (
-                f"\033[34;4{_cursor_color}m"
-                + _msg.data[vim._cursor.row][vim._cursor.col]
-                + "\033[m"
-            )
+            assert False, "Invalid cursor position"
+
+    if vim.mode == "x":
+        _split_line_color = bcolors.OKBLUE
+    elif vim.mode == "i":
+        _split_line_color = bcolors.OKGREEN
+    elif vim.mode == "c":
+        _split_line_color = bcolors.WARNING
+    else:
+        _split_line_color = bcolors.OKCYAN
+
     _line_number_width = len(str(vim._screen.top + vim._screen.lines))
     _split = (
-        bcolors.OKBLUE
+        _split_line_color
         + "-" * (max([len(line) for line in _msg.data]) + _line_number_width + 1)
         + bcolors.ENDC
     )
     if vim.gif:
         print(chr(27) + "[2J")
-    print("Exec: ", _comm)
-    print(_split)
+
+    output = ""
+    output += f"Exec: {_comm}\n"
+    output += _split + "\n"
+
     for _line_index in range(
         vim._screen.top, min(vim._screen.top + vim._screen.lines, len(_msg.data))
     ):
-        print(
+        output += (
             bcolors.WARNING
             + str(_line_index + 1)
             + " " * (_line_number_width - len(str(_line_index)))
-            + bcolors.ENDC,
-            end=" ",
+            + bcolors.ENDC
         )
-        print("".join(_msg.data[_line_index]))
-    print(_split)
-    print(f"mode: {vim.mode}, cursor: {vim.row},{vim.col}")
+        output += "".join(_msg.data[_line_index]) + "\n"
+    output += _split + "\n"
+    output += f"mode: {vim.mode}, cursor: {vim.row},{vim.col}\n"
+
+    if vim.web_mode:
+        return ansi_to_html(output)
+    else:
+        print(output)
+        return ""
 
 
 def _save(vim: VimEmulator, file_path: str) -> None:
