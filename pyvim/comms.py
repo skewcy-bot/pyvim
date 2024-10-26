@@ -339,9 +339,9 @@ def ansi_to_html(text):
         "46": "background-color:rgba(0,255,255,0.5);",
         "47": "background-color:rgba(255,255,255,0.5);",
         "90": "color:gray;",
-        "91": "color:lightred;",
+        "91": "color:orange;",
         "92": "color:lightgreen;",
-        "93": "color:lightyellow;",
+        "93": "color:grey;",
         "94": "color:lightblue;",
         "95": "color:lightmagenta;",
         "96": "color:lightcyan;",
@@ -401,8 +401,15 @@ def _print(
             _msg.data[vim.row][
                 vim._cursor.col
             ] = f"\033[34;4{_cursor_color}m{char}\033[0m"
-        if vim.width[vim.row] == 0:
+        elif vim.width[vim.row] == 0:
             _msg.data[vim.row] = [f"\033[34;4{_cursor_color}m \033[0m"]
+        elif vim.col >= vim.width[vim.row]:
+            char = _msg.data[vim.row][vim.width[vim.row] - 1]
+            _msg.data[vim.row][
+                vim.width[vim.row] - 1
+            ] = f"\033[34;4{_cursor_color}m{char}\033[0m"
+        else:
+            assert False, "Invalid cursor position"
 
     _line_number_width = len(str(vim._screen.top + vim._screen.lines))
     _split = (
@@ -415,6 +422,8 @@ def _print(
 
     output = ""
     output += f"Exec: {_comm}\n"
+    output += _split + "\n"
+
     for _line_index in range(
         vim._screen.top, min(vim._screen.top + vim._screen.lines, len(_msg.data))
     ):
@@ -429,11 +438,10 @@ def _print(
     output += f"mode: {vim.mode}, cursor: {vim.row},{vim.col}\n"
 
     if vim.web_mode:
-        print(ansi_to_html(output))
         return ansi_to_html(output)
     else:
         print(output)
-        return output
+        return ""
 
 
 def _save(vim: VimEmulator, file_path: str) -> None:

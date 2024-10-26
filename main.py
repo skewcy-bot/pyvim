@@ -7,7 +7,7 @@ Created:  2024-07-21T16:32:00.918Z
 
 from pyvim.pyvim import VimEmulator
 from pyvim.comms import _get_random_buffer
-
+from web.web import PyVimWeb
 
 if __name__ == "__main__":
 
@@ -153,4 +153,7 @@ if __name__ == "__main__":
 
     ## ========================================
     ## //ANCHOR - Test INTERACTIVE MODE
-    VimEmulator("hello world\n", 0, 0).run()
+    # VimEmulator("hello world\n", 0, 0).run()
+
+    app = PyVimWeb()
+    app.run(debug=True)
