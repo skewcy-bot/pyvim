@@ -115,3 +115,23 @@ def operator_J(vim: VimEmulator, args: str = "") -> VimEmulator:
 
 
 match_table["J"] = operator_J
+
+"""
+Join lines without modifying space.
+"""
+
+
+def operator_gJ(vim: VimEmulator, args: str = "") -> VimEmulator:
+    cursor = vim._cursor
+    if cursor.row == len(vim.buffer) - 1:
+        return vim
+
+    vim[cursor.row] = vim[cursor.row] + vim[cursor.row + 1]
+
+    vim.width[cursor.row] = len(vim[cursor.row])
+    vim.buffer.pop(cursor.row + 1)
+    vim.length -= 1
+    return vim
+
+
+match_table["gJ"] = operator_gJ

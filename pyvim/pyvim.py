@@ -6,7 +6,7 @@ Created:  2024-07-21T16:32:14.272Z
 """
 
 from time import sleep
-from typing import Callable, Tuple, Optional, Dict
+from typing import Callable, Tuple, Optional, Dict, Union
 from copy import deepcopy
 import re
 
@@ -94,6 +94,7 @@ class VimEmulator:
         row: int = 0,
         col: int = 0,
         params: Optional[Dict[str, bool]] = None,
+        web_mode: bool = False,
     ) -> None:
         self._buffer = Buffer(data=data)
         self._cursor = Cursor(row, col, self._buffer)
@@ -102,6 +103,7 @@ class VimEmulator:
             raise ValueError("Cursor out of bounds")
 
         self.mode = "x"  ## x: normal, i: insert, v: visual, r: replace, c: command
+        self.web_mode = web_mode
 
         if params is None:
             params = {}
@@ -142,9 +144,10 @@ class VimEmulator:
             elif command.endswith("<Esc>"):
                 command = ""
 
-    def exec(self, commands: str) -> bool:
+    def exec(self, commands: str) -> Union[bool, str]:
+        output = ""
         if self.verbose:
-            _print(self, commands, (0, 0))
+            output = _print(self, commands, (0, 0))
 
         index = 0
         while index < len(commands):
@@ -153,14 +156,14 @@ class VimEmulator:
                 command(self, commands[index : index + new_index])
                 if self.verbose:
                     _update_screen(self)
-                    _print(self, commands, (index, index + new_index))
-                    if self.gif:
+                    output = _print(self, commands, (index, index + new_index))
+                    if self.gif and not self.web_mode:
                         sleep(self.sleep_time)
                 self._cmd.append(commands[index : index + new_index])
                 index += new_index
             else:
-                return False
-        return True
+                return False if not self.web_mode else output
+        return True if not self.web_mode else output
 
     def match(self, commands: str) -> Tuple[Optional[Callable], int]:
         for pattern, command in match_table[self.mode].items():

@@ -125,9 +125,6 @@ if __name__ == "__main__":
     ## //ANCHOR - Test r
     # VimEmulator("hello world\n", 0, 0).exec("r1wr2")
 
-    ## //ANCHOR - Test INTERACTIVE MODE
-    VimEmulator("hello world\n", 0, 0).run()
-
     ## //ANCHOR - Test J
     # VimEmulator("hello  \n world", 0, 0).exec("J")
     # VimEmulator("hello  \nworld", 0, 0).exec("J")
@@ -135,3 +132,25 @@ if __name__ == "__main__":
     # VimEmulator("hello\n  world", 0, 0).exec("J")
     # VimEmulator("hello\nworld", 0, 0).exec("J")
     # VimEmulator("hello\n\nworld", 0, 0).exec("JJ")
+
+    ## //ANCHOR - Test gJ
+    # VimEmulator("hello  \n world", 0, 0).exec("gJ")
+    # VimEmulator("hello  \nworld", 0, 0).exec("gJ")
+    # VimEmulator("hello \n  world", 0, 0).exec("gJ")
+    # VimEmulator("hello\n  world", 0, 0).exec("gJ")
+    # VimEmulator("hello\nworld", 0, 0).exec("gJ")
+    # VimEmulator("hello\n\nworld", 0, 0).exec("gJ")
+
+    ## //ANCHOR - Test \d+\D{1,2}
+    # VimEmulator(_get_random_buffer(5, 10), 0, 0).exec("5j5l10ge10gg")
+
+    ## //ANCHOR - Test x
+    # VimEmulator("hello world\n", 0, 0).exec("x")
+    # VimEmulator("hello world\n", 0, -1).exec("xx")
+    # VimEmulator(" ", 0, 0).exec("xxxx")
+    # VimEmulator("hello world\n", 0, 0).exec("5x")
+    # VimEmulator("a", 0, 0).exec("x")
+
+    ## ========================================
+    ## //ANCHOR - Test INTERACTIVE MODE
+    VimEmulator("hello world\n", 0, 0).run()
