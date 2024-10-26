@@ -7,16 +7,17 @@ Created:  2024-09-15T01:40:01.734Z
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Callable, List
-from ..comms import _is_empty_line
+from ..comms import _is_empty_line, _is_out_of_bounds
 
 if TYPE_CHECKING:
     from ..pyvim import VimEmulator
+
 
 match_table: Dict[str, Callable] = {}
 
 
 """
-Change to INSERT mode.
+Change to INSERT mode from cursor position.
 """
 
 
@@ -26,6 +27,97 @@ def operator_i(vim: VimEmulator, args: str = "") -> VimEmulator:
 
 
 match_table["i"] = operator_i
+
+"""
+Change to INSERT mode from next cursor position.
+"""
+
+
+def operator_a(vim: VimEmulator, args: str = "") -> VimEmulator:
+    vim.col += 1
+    vim.mode = "i"
+    return vim
+
+
+match_table["a"] = operator_a
+
+"""
+Change to INSERT mode from start of next line.
+"""
+
+
+def operator_o(vim: VimEmulator, args: str = "") -> VimEmulator:
+    vim.buffer = vim.buffer[: vim.row + 1] + [[]] + vim.buffer[vim.row + 1 :]
+    vim.length += 1
+    vim.width = vim.width[: vim.row + 1] + [0] + vim.width[vim.row + 1 :]
+
+    vim.row += 1
+    vim.col = 0
+
+    vim.mode = "i"
+    return vim
+
+
+match_table["o"] = operator_o
+
+"""
+Change to INSERT mode from start of previous line.
+"""
+
+
+def operator_O(vim: VimEmulator, args: str = "") -> VimEmulator:
+    vim.buffer = vim.buffer[: vim.row] + [[]] + vim.buffer[vim.row :]
+    vim.length += 1
+    vim.width = vim.width[: vim.row] + [0] + vim.width[vim.row :]
+
+    vim.col = 0
+    vim.mode = "i"
+    return vim
+
+
+match_table["O"] = operator_O
+
+"""
+Change to INSERT mode from the first non-blank character of the current line.
+"""
+
+
+def operator_I(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if _is_empty_line(vim):
+        vim.mode = "i"
+        return vim
+    vim.col = 0
+    while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] in [" ", "\t"]:
+        vim.col += 1
+    if _is_out_of_bounds(vim):
+        vim.col = vim.width[vim.row] - 1
+    vim.mode = "i"
+    return vim
+
+
+match_table["I"] = operator_I
+
+"""
+Change to INSERT mode from the end of the current line.
+"""
+
+
+def operator_A(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if _is_empty_line(vim):
+        vim.mode = "i"
+        return vim
+    vim.col = vim.width[vim.row] - 1
+    while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] in [" ", "\t"]:
+        vim.col -= 1
+    if _is_out_of_bounds(vim):
+        vim.col = 0
+
+    vim.col += 1
+    vim.mode = "i"
+    return vim
+
+
+match_table["A"] = operator_A
 
 """
 Change to COMMAND mode.
@@ -135,3 +227,26 @@ def operator_gJ(vim: VimEmulator, args: str = "") -> VimEmulator:
 
 
 match_table["gJ"] = operator_gJ
+
+"""
+Delete the character under the cursor.
+"""
+
+
+def motion_x(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if _is_empty_line(vim):
+        return vim
+    if _is_out_of_bounds(vim):
+        return vim
+
+    vim.buffer[vim.row] = (
+        vim.buffer[vim.row][: vim.col] + vim.buffer[vim.row][vim.col + 1 :]
+    )
+    if vim.col == vim.width[vim.row] - 1 and vim.width[vim.row] > 1:
+        vim.col -= 1
+    vim.width[vim.row] -= 1
+
+    return vim
+
+
+match_table["x"] = motion_x

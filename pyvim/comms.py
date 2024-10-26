@@ -78,7 +78,9 @@ def _is_char(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
         return False
 
     _is_char = _is_normal(vim, cursor) or _is_spec(vim, cursor)
-    _is_space = vim[cursor.row][cursor.col] == " "
+    _is_space = (
+        vim[cursor.row][cursor.col] in [" ", "\t"]
+    )
     assert _is_space != _is_char
 
     return _is_char
@@ -239,7 +241,7 @@ def _is_blank_line(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
         cursor = vim._cursor
     if len(vim[cursor.row]) == 0:
         return False
-    if all(char == " " for char in vim[cursor.row]):
+    if all(char in [" ", "\t"] for char in vim[cursor.row]):
         return True
     return False
 

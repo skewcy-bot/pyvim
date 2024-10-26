@@ -306,7 +306,7 @@ def motion_caret(vim: VimEmulator, args: str = "") -> VimEmulator:
     if _is_empty_line(vim):
         return vim
     vim.col = 0
-    while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] == " ":
+    while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] in [" ", "\t"]:
         vim.col += 1
     if _is_out_of_bounds(vim):
         vim.col = vim.width[vim.row] - 1
@@ -750,28 +750,6 @@ def motion_z(vim: VimEmulator, args: str = "") -> VimEmulator:
 match_table["z[t|z|b]"] = motion_z
 
 
-"""
-Delete the character under the cursor.
-"""
-
-
-def motion_x(vim: VimEmulator, args: str = "") -> VimEmulator:
-    if _is_empty_line(vim):
-        return vim
-    if _is_out_of_bounds(vim):
-        return vim
-
-    vim.buffer[vim.row] = (
-        vim.buffer[vim.row][: vim.col] + vim.buffer[vim.row][vim.col + 1 :]
-    )
-    if vim.col == vim.width[vim.row] - 1 and vim.width[vim.row] > 1:
-        vim.col -= 1
-    vim.width[vim.row] -= 1
-
-    return vim
-
-
-match_table["x"] = motion_x
 
 
 """

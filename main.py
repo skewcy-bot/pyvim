@@ -6,7 +6,6 @@ Created:  2024-07-21T16:32:00.918Z
 """
 
 from pyvim.pyvim import VimEmulator
-from pyvim.comms import _get_random_buffer
 import sys
 import os
 
