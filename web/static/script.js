@@ -3,22 +3,20 @@ const terminal = document.getElementById('terminal');
 
 document.addEventListener('keydown', (event) => {
     event.preventDefault(); // Prevent default browser behavior
-    
+
     let key = event.key;
     let modifiers = '';
 
     if (event.ctrlKey && key !== 'Control') modifiers += 'C-';
     if (event.altKey && key !== 'Alt') modifiers += 'M-';
-    if (event.metaKey && key !== 'Meta') modifiers += 'D-'; // For Command key on Mac
-    if (event.shiftKey && key.length > 1) modifiers += 'S-';
+    if (event.metaKey && key !== 'Meta') modifiers += 'D-';
+
 
     // Handle special keys
     switch (key) {
         case 'Escape': key = '<Esc>'; break;
         case 'Enter': key = '<CR>'; break;
         case 'Backspace': key = '<BS>'; break;
-        case 'Tab': key = '<Tab>'; break;
-        case ' ': key = '<Space>'; break;
         case 'ArrowLeft': key = '<Left>'; break;
         case 'ArrowRight': key = '<Right>'; break;
         case 'ArrowUp': key = '<Up>'; break;
@@ -42,9 +40,8 @@ document.addEventListener('keydown', (event) => {
     }
 
     // Handle uppercase letters
-    if (key.length === 1 && key.match(/[A-Z]/)) {
+    if (event.shiftKey && (key.length > 1 || !key.match(/[A-Z]/))) {
         modifiers += 'S-';
-        key = key.toLowerCase();
     }
 
     const command = modifiers + key;
