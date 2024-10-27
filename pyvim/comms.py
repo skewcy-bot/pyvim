@@ -78,9 +78,7 @@ def _is_char(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
         return False
 
     _is_char = _is_normal(vim, cursor) or _is_spec(vim, cursor)
-    _is_space = (
-        vim[cursor.row][cursor.col] in [" ", "\t"]
-    )
+    _is_space = vim[cursor.row][cursor.col] in [" ", "\t"]
     assert _is_space != _is_char
 
     return _is_char
@@ -315,11 +313,6 @@ class bcolors:
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
-
-
-def strip_ansi_codes(text):
-    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
-    return ansi_escape.sub("", text)
 
 
 def ansi_to_html(text):

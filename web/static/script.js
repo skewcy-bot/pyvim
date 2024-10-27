@@ -2,50 +2,49 @@ const socket = io();
 const terminal = document.getElementById('terminal');
 
 document.addEventListener('keydown', (event) => {
-    event.preventDefault(); // Prevent default browser behavior
+    event.preventDefault();
 
     let key = event.key;
     let modifiers = '';
 
-    if (event.ctrlKey && key !== 'Control') modifiers += 'C-';
-    if (event.altKey && key !== 'Alt') modifiers += 'M-';
-    if (event.metaKey && key !== 'Meta') modifiers += 'D-';
-
-
     // Handle special keys
-    switch (key) {
-        case 'Escape': key = '<Esc>'; break;
-        case 'Enter': key = '<CR>'; break;
-        case 'Backspace': key = '<BS>'; break;
-        case 'ArrowLeft': key = '<Left>'; break;
-        case 'ArrowRight': key = '<Right>'; break;
-        case 'ArrowUp': key = '<Up>'; break;
-        case 'ArrowDown': key = '<Down>'; break;
-        case 'Home': key = '<Home>'; break;
-        case 'End': key = '<End>'; break;
-        case 'PageUp': key = '<PageUp>'; break;
-        case 'PageDown': key = '<PageDown>'; break;
-        case 'Delete': key = '<Del>'; break;
-        case 'Insert': key = '<Insert>'; break;
-    }
+    const specialKeys = {
+        'Escape': '<Esc>',
+        'Enter': '<CR>',
+        'Backspace': '<BS>',
+        'Tab': '\t',
+        'ArrowUp': '<Up>',
+        'ArrowDown': '<Down>',
+        'ArrowLeft': '<Left>',
+        'ArrowRight': '<Right>',
+        'Home': '<Home>',
+        'End': '<End>',
+        'PageUp': '<PageUp>',
+        'PageDown': '<PageDown>',
+        'Delete': '<Del>',
+        'Insert': '<Insert>'
+    };
 
-    // Handle function keys
-    if (key.startsWith('F') && key.length > 1) {
+    if (key in specialKeys) {
+        key = specialKeys[key];
+    } else if (key.startsWith('F') && key.length > 1) {
+        // Function keys
         key = `<${key}>`;
+    } else if (event.ctrlKey && key.length === 1) {
+        // Control key combinations
+        key = `<C-${key.toUpperCase()}>`;
+    } else if (event.altKey && key.length === 1) {
+        // Alt key combinations
+        key = `<M-${key}>`;
+    } else if (key.length === 1) {
+        // Single characters (including shifted characters)
+        key = key;
+    } else {
+        // Ignore other keys
+        return;
     }
 
-    // Handle modifier keys when pressed alone
-    if (['Control', 'Alt', 'Shift', 'Meta'].includes(key)) {
-        return; // Don't send modifier keys when pressed alone
-    }
-
-    // Handle uppercase letters
-    if (event.shiftKey && (key.length > 1 || !key.match(/[A-Z]/))) {
-        modifiers += 'S-';
-    }
-
-    const command = modifiers + key;
-    socket.emit('command', command);
+    socket.emit('command', key);
 });
 
 socket.on('update', (data) => {
