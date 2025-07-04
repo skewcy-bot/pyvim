@@ -20,87 +20,8 @@ class JsonTestRunner:
         self.failed = 0
         self.failures = []
     
-    def run_test(self, test: Dict[str, Any]) -> bool:
-        name = test.get('name', 'Unnamed test')
-        input_text = test.get('input', '')
-        commands = test.get('commands', '')
-        cursor = test.get('cursor', [0, 0])
-        
-        if self.verbose:
-            print(f"  Running: {name}")
-        
-        try:
-            vim_result = self.vim_executor.execute_commands(
-                input_text, commands, cursor[0], cursor[1]
-            )
-            
-            if not vim_result['success']:
-                self.failed += 1
-                self.failures.append({
-                    'test': name,
-                    'error': f"Vim failed: {vim_result['vim_error']}"
-                })
-                if self.verbose:
-                    print(f"    ✗ Vim execution failed")
-                return False
-            
-            pyvim = VimEmulator(input_text, cursor[0], cursor[1], {"verbose": False, "sleep_time": 0})
-            pyvim_success, _ = pyvim.exec(commands)
-            
-            if not pyvim_success:
-                self.failed += 1
-                self.failures.append({
-                    'test': name,
-                    'error': "PyVim execution failed"
-                })
-                if self.verbose:
-                    print(f"    ✗ PyVim execution failed")
-                return False
-            
-            pyvim_result = {
-                'text': str(pyvim._buffer),
-                'cursor_row': pyvim.row,
-                'cursor_col': pyvim.col
-            }
-            
-            text_match = vim_result['final_state']['text'] == pyvim_result['text']
-            row_match = vim_result['final_state']['cursor_row'] == pyvim_result['cursor_row']
-            col_match = vim_result['final_state']['cursor_col'] == pyvim_result['cursor_col']
-            
-            if text_match and row_match and col_match:
-                self.passed += 1
-                if self.verbose:
-                    print(f"    ✓ Pass")
-                return True
-            else:
-                self.failed += 1
-                error_parts = []
-                if not text_match:
-                    error_parts.append(f"Text mismatch: vim='{vim_result['final_state']['text']}', pyvim='{pyvim_result['text']}'")
-                if not row_match:
-                    error_parts.append(f"Row mismatch: vim={vim_result['final_state']['cursor_row']}, pyvim={pyvim_result['cursor_row']}")
-                if not col_match:
-                    error_parts.append(f"Col mismatch: vim={vim_result['final_state']['cursor_col']}, pyvim={pyvim_result['cursor_col']}")
-                
-                self.failures.append({
-                    'test': name,
-                    'error': '; '.join(error_parts)
-                })
-                if self.verbose:
-                    print(f"    ✗ {'; '.join(error_parts)}")
-                return False
-                
-        except Exception as e:
-            self.failed += 1
-            self.failures.append({
-                'test': name,
-                'error': str(e)
-            })
-            if self.verbose:
-                print(f"    ✗ Exception: {e}")
-            return False
-    
     def run_file(self, filepath: str) -> None:
+        """Run all tests in a JSON file"""
         with open(filepath, 'r') as f:
             data = json.load(f)
         
@@ -110,16 +31,92 @@ class JsonTestRunner:
         print(f"\n{suite_name} ({len(tests)} tests)")
         print("-" * 50)
         
-        for test in tests:
-            self.run_test(test)
+        if not tests:
+            return
+        
+        # Always use batch execution for optimal performance
+        try:
+            vim_results = self.vim_executor.execute_batch(tests)
+            for i, test in enumerate(tests):
+                if i < len(vim_results):
+                    self._process_test_result(test, vim_results[i])
+        except Exception as e:
+            if self.verbose:
+                print(f"  Batch execution failed: {e}")
+            # Mark all tests as failed if batch execution fails
+            for test in tests:
+                self._record_failure(test.get('name', 'Unnamed test'), str(e))
+    
+    def _process_test_result(self, test: Dict[str, Any], vim_result: Dict[str, Any]) -> None:
+        """Process a single test result"""
+        name = test.get('name', 'Unnamed test')
+        input_text = test.get('input', '')
+        commands = test.get('commands', '')
+        cursor = test.get('cursor', [0, 0])
+        
+        if self.verbose:
+            print(f"  Running: {name}")
+        
+        try:
+            # Check vim execution
+            if not vim_result['success']:
+                self._record_failure(name, f"Vim failed: {vim_result['vim_error']}")
+                return
+            
+            # Run PyVim for comparison
+            pyvim = VimEmulator(input_text, cursor[0], cursor[1], {"verbose": False, "sleep_time": 0})
+            pyvim_success, _ = pyvim.exec(commands)
+            
+            if not pyvim_success:
+                self._record_failure(name, "PyVim execution failed")
+                return
+            
+            # Compare results
+            pyvim_result = {
+                'text': str(pyvim._buffer),
+                'cursor_row': pyvim.row,
+                'cursor_col': pyvim.col
+            }
+            
+            vim_final = vim_result['final_state']
+            text_match = vim_final['text'] == pyvim_result['text']
+            row_match = vim_final['cursor_row'] == pyvim_result['cursor_row']
+            col_match = vim_final['cursor_col'] == pyvim_result['cursor_col']
+            
+            if text_match and row_match and col_match:
+                self.passed += 1
+                if self.verbose:
+                    print(f"    ✓ Pass")
+            else:
+                # Build detailed error message
+                errors = []
+                if not text_match:
+                    errors.append(f"Text mismatch: vim='{vim_final['text']}', pyvim='{pyvim_result['text']}'")
+                if not row_match:
+                    errors.append(f"Row mismatch: vim={vim_final['cursor_row']}, pyvim={pyvim_result['cursor_row']}")
+                if not col_match:
+                    errors.append(f"Col mismatch: vim={vim_final['cursor_col']}, pyvim={pyvim_result['cursor_col']}")
+                
+                self._record_failure(name, '; '.join(errors))
+                
+        except Exception as e:
+            self._record_failure(name, str(e))
+    
+    def _record_failure(self, test_name: str, error: str) -> None:
+        """Record a test failure"""
+        self.failed += 1
+        self.failures.append({'test': test_name, 'error': error})
+        if self.verbose:
+            print(f"    ✗ {error}")
     
     def run_directory(self, directory: str) -> None:
+        """Run all JSON test files in a directory"""
         test_files = sorted(glob.glob(os.path.join(directory, '*.json')))
-        
         for filepath in test_files:
             self.run_file(filepath)
     
     def print_summary(self) -> None:
+        """Print test execution summary"""
         total = self.passed + self.failed
         print("\n" + "=" * 50)
         print(f"SUMMARY: {self.passed}/{total} tests passed")

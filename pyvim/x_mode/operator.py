@@ -22,6 +22,8 @@ Change to INSERT mode from cursor position.
 
 
 def operator_i(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if vim.col > 0:
+        vim.col -= 1
     vim.mode = "i"
     return vim
 
@@ -34,7 +36,6 @@ Change to INSERT mode from next cursor position.
 
 
 def operator_a(vim: VimEmulator, args: str = "") -> VimEmulator:
-    vim.col += 1
     vim.mode = "i"
     return vim
 
@@ -91,6 +92,8 @@ def operator_I(vim: VimEmulator, args: str = "") -> VimEmulator:
         vim.col += 1
     if _is_out_of_bounds(vim):
         vim.col = vim.width[vim.row] - 1
+    elif vim.col > 0:
+        vim.col -= 1
     vim.mode = "i"
     return vim
 
@@ -107,12 +110,6 @@ def operator_A(vim: VimEmulator, args: str = "") -> VimEmulator:
         vim.mode = "i"
         return vim
     vim.col = vim.width[vim.row] - 1
-    while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] in [" ", "\t"]:
-        vim.col -= 1
-    if _is_out_of_bounds(vim):
-        vim.col = 0
-
-    vim.col += 1
     vim.mode = "i"
     return vim
 
@@ -167,6 +164,8 @@ Change into REPLACE mode.
 
 
 def operator_R(vim: VimEmulator, args: str = "") -> VimEmulator:
+    if vim.col > 0:
+        vim.col -= 1
     vim.mode = "r"
     return vim
 
@@ -194,11 +193,14 @@ def operator_J(vim: VimEmulator, args: str = "") -> VimEmulator:
         return list("".join(line).lstrip())
 
     ends_with_space = rstrip(current_line) != current_line
-
-    if ends_with_space:
-        vim[cursor.row] = current_line + lstrip(next_line)
+    stripped_next = lstrip(next_line)
+    
+    if ends_with_space or not stripped_next:
+        vim[cursor.row] = current_line + stripped_next
+        vim.col = len(current_line)
     else:
-        vim[cursor.row] = rstrip(current_line) + [" "] + lstrip(next_line)
+        vim[cursor.row] = rstrip(current_line) + [" "] + stripped_next
+        vim.col = len(rstrip(current_line)) + 1
 
     vim.width[cursor.row] = len(vim[cursor.row])
     vim.buffer.pop(cursor.row + 1)
@@ -218,7 +220,9 @@ def operator_gJ(vim: VimEmulator, args: str = "") -> VimEmulator:
     if cursor.row == len(vim.buffer) - 1:
         return vim
 
+    original_length = len(vim[cursor.row])
     vim[cursor.row] = vim[cursor.row] + vim[cursor.row + 1]
+    vim.col = original_length
 
     vim.width[cursor.row] = len(vim[cursor.row])
     vim.buffer.pop(cursor.row + 1)
