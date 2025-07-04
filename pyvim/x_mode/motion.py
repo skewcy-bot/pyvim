@@ -36,8 +36,6 @@ Match table for NORMAL commands in REGEX.
 
 def motion_l(vim: VimEmulator, args: str = "") -> VimEmulator:
     vim.col = min(vim.col + 1, vim.width[vim.row] - 1)
-    if _is_empty_line(vim):
-        vim.col = 0
     return vim
 
 
@@ -50,8 +48,8 @@ Move the cursor to the previous line.
 
 
 def motion_k(vim: VimEmulator, args: str = "") -> VimEmulator:
-    # //TODO: Check if cursor output bound
     vim.row = max(0, vim.row - 1)
+    vim.col = min(vim.col, vim.width[vim.row] - 1)
     return vim
 
 
@@ -66,8 +64,8 @@ def motion_num_k(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\d+k"] = motion_num_k
-match_table["\d+gk"] = motion_num_k
+match_table[r"\d+k"] = motion_num_k
+match_table[r"\d+gk"] = motion_num_k
 
 
 """
@@ -77,6 +75,7 @@ Move the cursor to the next line.
 
 def motion_j(vim: VimEmulator, args: str = "") -> VimEmulator:
     vim.row = min(vim.row + 1, vim.length - 1)
+    vim.col = min(vim.col, vim.width[vim.row] - 1)
     return vim
 
 
@@ -91,8 +90,8 @@ def motion_num_j(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\d+j"] = motion_num_j
-match_table["\d+gj"] = motion_num_j
+match_table[r"\d+j"] = motion_num_j
+match_table[r"\d+gj"] = motion_num_j
 
 
 """
@@ -102,10 +101,6 @@ Move the cursor to the left.
 
 def motion_h(vim: VimEmulator, args: str = "") -> VimEmulator:
     vim.col = max(0, vim.col - 1)
-    if vim.col >= vim.width[vim.row]:
-        vim.col = vim.width[vim.row] - 1
-    if _is_empty_line(vim):
-        vim.col = 0
     return vim
 
 
@@ -304,6 +299,7 @@ Move the cursor to the first non-blank character of the line.
 
 def motion_caret(vim: VimEmulator, args: str = "") -> VimEmulator:
     if _is_empty_line(vim):
+        vim.col = 0
         return vim
     vim.col = 0
     while not _is_out_of_bounds(vim) and vim[vim.row][vim.col] in [" ", "\t"]:
@@ -313,7 +309,7 @@ def motion_caret(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\^"] = motion_caret
+match_table[r"\^"] = motion_caret
 
 
 """
@@ -322,13 +318,11 @@ Move the cursor to the end of the line.
 
 
 def motion_dollar(vim: VimEmulator, args: str = "") -> VimEmulator:
-    if _is_empty_line(vim):
-        return vim
     vim.col = vim.width[vim.row] - 1
     return vim
 
 
-match_table["\$"] = motion_dollar
+match_table[r"\$"] = motion_dollar
 
 """
 Move the cursor to the start of the line. 
@@ -336,8 +330,6 @@ Move the cursor to the start of the line.
 
 
 def motion_zero(vim: VimEmulator, args: str = "") -> VimEmulator:
-    if _is_empty_line(vim):
-        return vim
     vim.col = 0
     return vim
 
@@ -460,7 +452,7 @@ def motion_brace_right(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\}"] = motion_brace_right
+match_table[r"\}"] = motion_brace_right
 
 """
 Move cursor to previous paragraph.
@@ -486,7 +478,7 @@ def motion_brace_left(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\{"] = motion_brace_left
+match_table[r"\{"] = motion_brace_left
 
 
 """
@@ -554,12 +546,17 @@ Jump to the last non-blank character of the line
 
 
 def motion_g_underscore(vim: VimEmulator, args: str = "") -> VimEmulator:
-    motion_dollar(vim)
-    motion_ge(vim)
+    if _is_empty_line(vim):
+        vim.col = 0
+        return vim
+    
+    vim.col = vim.width[vim.row] - 1
+    while vim.col > 0 and vim[vim.row][vim.col] in [" ", "\t"]:
+        vim.col -= 1
     return vim
 
 
-match_table["g\_"] = motion_g_underscore
+match_table[r"g\_"] = motion_g_underscore
 
 
 """
@@ -569,7 +566,7 @@ Go to the first line of the document
 
 def motion_gg(vim: VimEmulator, args: str = "") -> VimEmulator:
     vim.row = 0
-    motion_zero(vim)
+    vim.col = 0
     return vim
 
 
@@ -595,7 +592,12 @@ Go to the line number.
 
 
 def motion_num_gg(vim: VimEmulator, args: str = "") -> VimEmulator:
-    line_num = int(args[:-2]) - 1
+    # Extract the number part, handling potential empty string
+    number_part = args[:-2] if len(args) > 2 else args[:-1]
+    if not number_part:
+        return vim
+    
+    line_num = int(number_part) - 1
     if line_num < 0:
         vim.row = 0
     elif line_num >= vim.length:
@@ -607,7 +609,7 @@ def motion_num_gg(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table["\d+(gg|G)"] = motion_num_gg
+match_table[r"\d+(gg|G)"] = motion_num_gg
 
 
 """
@@ -782,4 +784,4 @@ def motion_num_motion(vim: VimEmulator, args: str = "") -> VimEmulator:
     return vim
 
 
-match_table[f"\d+({'|'.join(match_table.keys())})"] = motion_num_motion
+match_table[rf"\d+({'|'.join(match_table.keys())})"] = motion_num_motion

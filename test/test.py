@@ -44,7 +44,7 @@ class JsonTestRunner:
                     print(f"    ✗ Vim execution failed")
                 return False
             
-            pyvim = VimEmulator(input_text, cursor[0], cursor[1], {"verbose": False})
+            pyvim = VimEmulator(input_text, cursor[0], cursor[1], {"verbose": False, "sleep_time": 0})
             pyvim_success, _ = pyvim.exec(commands)
             
             if not pyvim_success:

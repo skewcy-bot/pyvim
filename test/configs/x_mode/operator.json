@@ -1,0 +1,365 @@
+{
+  "name": "Normal Mode Operator Tests",
+  "tests": [
+    {
+      "name": "Insert at cursor - basic",
+      "input": "hello world",
+      "commands": "i",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert at cursor - empty line",
+      "input": "",
+      "commands": "i",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert at cursor - end of line",
+      "input": "test",
+      "commands": "i",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Insert at cursor - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "i",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Insert at cursor - beginning of line",
+      "input": "hello world",
+      "commands": "i",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Append after cursor - basic",
+      "input": "hello",
+      "commands": "a",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Append after cursor - end of line",
+      "input": "test",
+      "commands": "a",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Append after cursor - empty line",
+      "input": "",
+      "commands": "a",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Append after cursor - multiline",
+      "input": "first\nsecond\nthird",
+      "commands": "a",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Append after cursor - beginning of line",
+      "input": "hello",
+      "commands": "a",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert at beginning of line - basic",
+      "input": "hello world",
+      "commands": "I",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert at beginning of line - with whitespace",
+      "input": "  hello world",
+      "commands": "I",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert at beginning of line - empty",
+      "input": "",
+      "commands": "I",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert at beginning of line - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "I",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Insert at beginning of line - single char",
+      "input": "x",
+      "commands": "I",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Append at end of line - basic",
+      "input": "hello world",
+      "commands": "A",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Append at end of line - single char",
+      "input": "x",
+      "commands": "A",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Append at end of line - empty",
+      "input": "",
+      "commands": "A",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Append at end of line - multiline",
+      "input": "first\nsecond\nthird",
+      "commands": "A",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Append at end of line - with trailing space",
+      "input": "hello ",
+      "commands": "A",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Open line below - basic",
+      "input": "hello world",
+      "commands": "o",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Open line below - empty",
+      "input": "",
+      "commands": "o",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Open line below - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "o",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Open line below - last line",
+      "input": "line1\nline2",
+      "commands": "o",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Open line below - single char",
+      "input": "x",
+      "commands": "o",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Open line above - basic",
+      "input": "hello world",
+      "commands": "O",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Open line above - empty",
+      "input": "",
+      "commands": "O",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Open line above - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "O",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Open line above - first line",
+      "input": "line1\nline2",
+      "commands": "O",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Open line above - single char",
+      "input": "x",
+      "commands": "O",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Enter command mode - basic",
+      "input": "hello world",
+      "commands": ":",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Enter command mode - empty",
+      "input": "",
+      "commands": ":",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Enter command mode - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Enter command mode - end of line",
+      "input": "hello",
+      "commands": ":",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Enter command mode - beginning of line",
+      "input": "hello",
+      "commands": ":",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace single char - basic",
+      "input": "hello world",
+      "commands": "rx",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace single char - with space",
+      "input": "hello",
+      "commands": "r ",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Replace single char - at end",
+      "input": "hello",
+      "commands": "r!",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Replace single char - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "rX",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace single char - with number",
+      "input": "test",
+      "commands": "r5",
+      "cursor": [0, 1]
+    },
+    {
+      "name": "Enter replace mode - basic",
+      "input": "hello world",
+      "commands": "R",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Enter replace mode - empty",
+      "input": "",
+      "commands": "R",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Enter replace mode - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "R",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Enter replace mode - end of line",
+      "input": "hello",
+      "commands": "R",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Enter replace mode - beginning of line",
+      "input": "hello",
+      "commands": "R",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Join lines - basic",
+      "input": "hello\nworld",
+      "commands": "J",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Join lines - multiple",
+      "input": "line1\nline2\nline3",
+      "commands": "J",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Join lines - with spaces",
+      "input": "hello \n world",
+      "commands": "J",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Join lines - empty line",
+      "input": "hello\n\nworld",
+      "commands": "J",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Join lines - last line",
+      "input": "hello\nworld",
+      "commands": "J",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Join lines without space - basic",
+      "input": "hello\nworld",
+      "commands": "gJ",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Join lines without space - multiple",
+      "input": "line1\nline2\nline3",
+      "commands": "gJ",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Join lines without space - with spaces",
+      "input": "hello \n world",
+      "commands": "gJ",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Join lines without space - empty",
+      "input": "hello\n\nworld",
+      "commands": "gJ",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Join lines without space - last line",
+      "input": "hello\nworld",
+      "commands": "gJ",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Delete char - basic",
+      "input": "hello world",
+      "commands": "x",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Delete char - at end",
+      "input": "hello",
+      "commands": "x",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Delete char - single char",
+      "input": "x",
+      "commands": "x",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Delete char - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "x",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Delete char - empty line",
+      "input": "",
+      "commands": "x",
+      "cursor": [0, 0]
+    }
+  ]
+}

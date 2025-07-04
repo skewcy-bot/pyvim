@@ -1,0 +1,275 @@
+{
+  "name": "Command Mode Tests",
+  "tests": [
+    {
+      "name": "Exit command mode - basic",
+      "input": "hello world",
+      "commands": ":<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Exit command mode - from empty",
+      "input": "",
+      "commands": ":<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Exit command mode - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Exit command mode - at end",
+      "input": "hello",
+      "commands": "$:<Esc>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Exit command mode - at beginning",
+      "input": "hello",
+      "commands": "0:<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write command - basic",
+      "input": "hello world",
+      "commands": ":w<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Write command - from empty",
+      "input": "",
+      "commands": ":w<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":w<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Write command - at end",
+      "input": "hello",
+      "commands": "$:w<CR>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Write command - at beginning",
+      "input": "hello",
+      "commands": "0:w<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write force command - basic",
+      "input": "hello world",
+      "commands": ":w!<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Write force command - from empty",
+      "input": "",
+      "commands": ":w!<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write force command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":w!<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Write force command - at end",
+      "input": "hello",
+      "commands": "$:w!<CR>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Write force command - at beginning",
+      "input": "hello",
+      "commands": "0:w!<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Quit command - basic",
+      "input": "hello world",
+      "commands": ":q<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Quit command - from empty",
+      "input": "",
+      "commands": ":q<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Quit command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":q<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Quit command - at end",
+      "input": "hello",
+      "commands": "$:q<CR>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Quit command - at beginning",
+      "input": "hello",
+      "commands": "0:q<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Quit force command - basic",
+      "input": "hello world",
+      "commands": ":q!<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Quit force command - from empty",
+      "input": "",
+      "commands": ":q!<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Quit force command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":q!<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Quit force command - at end",
+      "input": "hello",
+      "commands": "$:q!<CR>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Quit force command - at beginning",
+      "input": "hello",
+      "commands": "0:q!<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write and quit command - basic",
+      "input": "hello world",
+      "commands": ":wq<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Write and quit command - from empty",
+      "input": "",
+      "commands": ":wq<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write and quit command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":wq<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Write and quit command - at end",
+      "input": "hello",
+      "commands": "$:wq<CR>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Write and quit command - at beginning",
+      "input": "hello",
+      "commands": "0:wq<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write and quit force command - basic",
+      "input": "hello world",
+      "commands": ":wq!<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Write and quit force command - from empty",
+      "input": "",
+      "commands": ":wq!<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Write and quit force command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":wq!<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Write and quit force command - at end",
+      "input": "hello",
+      "commands": "$:wq!<CR>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Write and quit force command - at beginning",
+      "input": "hello",
+      "commands": "0:wq!<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Command with text - basic",
+      "input": "hello world",
+      "commands": ":test<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Command with text - from empty",
+      "input": "",
+      "commands": ":test<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Command with text - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":test<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Command with text - at end",
+      "input": "hello",
+      "commands": "$:test<Esc>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Command with text - at beginning",
+      "input": "hello",
+      "commands": "0:test<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Long command - basic",
+      "input": "hello world",
+      "commands": ":this is a very long command that should be handled correctly<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Long command - from empty",
+      "input": "",
+      "commands": ":this is a very long command that should be handled correctly<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Long command - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": ":this is a very long command that should be handled correctly<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Long command - at end",
+      "input": "hello",
+      "commands": "$:this is a very long command that should be handled correctly<Esc>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Long command - at beginning",
+      "input": "hello",
+      "commands": "0:this is a very long command that should be handled correctly<Esc>",
+      "cursor": [0, 0]
+    }
+  ]
+}

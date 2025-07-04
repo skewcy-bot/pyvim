@@ -46,7 +46,7 @@ def delegate_property(attribute_name: str, property_name: str) -> property:
 
 class Buffer:
     def __init__(self, data: str) -> None:
-        self.data = [list(line) for line in data.split("\n")]
+        self.data = [list(line) if line else [''] for line in data.split("\n")]
         self.length = len(self.data)
         self.width = [len(line) for line in self.data]
 

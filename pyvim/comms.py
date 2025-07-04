@@ -222,9 +222,7 @@ Check if the current row buffer is empty.
 def _is_empty_line(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
     if cursor is None:
         cursor = vim._cursor
-    if vim.width[cursor.row] == 0:
-        return True
-    return False
+    return vim.width[cursor.row] == 1 and vim[cursor.row][0] == ''
 
 
 """
@@ -564,7 +562,7 @@ def _get_key() -> str:
                     25: "<C-Y>",
                     26: "<C-Z>",
                     27: "<Esc>",
-                    28: "<C-\>",
+                    28: "<C-\\>",
                     29: "<C-]>",
                     30: "<C-6>",
                     31: "<C-/>",

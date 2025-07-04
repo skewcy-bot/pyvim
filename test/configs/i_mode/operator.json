@@ -1,0 +1,245 @@
+{
+  "name": "Insert Mode Tests",
+  "tests": [
+    {
+      "name": "Exit insert mode - basic",
+      "input": "hello world",
+      "commands": "i<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Exit insert mode - from empty",
+      "input": "",
+      "commands": "i<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Exit insert mode - after typing",
+      "input": "hello",
+      "commands": "iworld<Esc>",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Exit insert mode - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "i<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Exit insert mode - at end",
+      "input": "hello",
+      "commands": "A<Esc>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Insert newline - basic",
+      "input": "hello world",
+      "commands": "i<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert newline - at beginning",
+      "input": "hello world",
+      "commands": "I<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert newline - at end",
+      "input": "hello world",
+      "commands": "A<CR>",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Insert newline - empty line",
+      "input": "",
+      "commands": "i<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert newline - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "i<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Insert text - basic",
+      "input": "hello world",
+      "commands": "itest",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert text - at beginning",
+      "input": "hello world",
+      "commands": "Itest",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert text - at end",
+      "input": "hello world",
+      "commands": "Atest",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Insert text - empty line",
+      "input": "",
+      "commands": "itest",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert text - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "itest",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Insert special chars - space",
+      "input": "hello world",
+      "commands": "i ",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert special chars - tab",
+      "input": "hello world",
+      "commands": "i\t",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert special chars - punctuation",
+      "input": "hello world",
+      "commands": "i!@#$%",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert special chars - numbers",
+      "input": "hello world",
+      "commands": "i12345",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert special chars - mixed",
+      "input": "hello world",
+      "commands": "itest123!",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert multiple lines - basic",
+      "input": "hello",
+      "commands": "i<CR>world<CR>test",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Insert multiple lines - at beginning",
+      "input": "hello",
+      "commands": "I<CR>world<CR>test",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert multiple lines - at end",
+      "input": "hello",
+      "commands": "A<CR>world<CR>test",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Insert multiple lines - empty",
+      "input": "",
+      "commands": "i<CR>world<CR>test",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert multiple lines - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "i<CR>world<CR>test",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Insert and exit - basic",
+      "input": "hello world",
+      "commands": "itest<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert and exit - at beginning",
+      "input": "hello world",
+      "commands": "Itest<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert and exit - at end",
+      "input": "hello world",
+      "commands": "Atest<Esc>",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Insert and exit - empty",
+      "input": "",
+      "commands": "itest<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert and exit - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "itest<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Insert newline and exit - basic",
+      "input": "hello world",
+      "commands": "i<CR><Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Insert newline and exit - at beginning",
+      "input": "hello world",
+      "commands": "I<CR><Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert newline and exit - at end",
+      "input": "hello world",
+      "commands": "A<CR><Esc>",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Insert newline and exit - empty",
+      "input": "",
+      "commands": "i<CR><Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert newline and exit - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "i<CR><Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Insert long text - basic",
+      "input": "hello",
+      "commands": "iThis is a very long text that should be inserted correctly",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Insert long text - at beginning",
+      "input": "hello",
+      "commands": "IThis is a very long text that should be inserted correctly",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert long text - at end",
+      "input": "hello",
+      "commands": "AThis is a very long text that should be inserted correctly",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Insert long text - empty",
+      "input": "",
+      "commands": "iThis is a very long text that should be inserted correctly",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Insert long text - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "iThis is a very long text that should be inserted correctly",
+      "cursor": [1, 2]
+    }
+  ]
+}

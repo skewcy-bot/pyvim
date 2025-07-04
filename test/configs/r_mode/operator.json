@@ -1,0 +1,275 @@
+{
+  "name": "Replace Mode Tests",
+  "tests": [
+    {
+      "name": "Exit replace mode - basic",
+      "input": "hello world",
+      "commands": "R<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Exit replace mode - from empty",
+      "input": "",
+      "commands": "R<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Exit replace mode - after typing",
+      "input": "hello",
+      "commands": "Rworld<Esc>",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Exit replace mode - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "R<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Exit replace mode - at end",
+      "input": "hello",
+      "commands": "R<Esc>",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Replace newline - basic",
+      "input": "hello world",
+      "commands": "R<CR>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace newline - at beginning",
+      "input": "hello world",
+      "commands": "0R<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace newline - at end",
+      "input": "hello world",
+      "commands": "$R<CR>",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Replace newline - empty line",
+      "input": "",
+      "commands": "R<CR>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace newline - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "R<CR>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace text - basic",
+      "input": "hello world",
+      "commands": "Rtest",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace text - at beginning",
+      "input": "hello world",
+      "commands": "0Rtest",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace text - at end",
+      "input": "hello world",
+      "commands": "$Rtest",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Replace text - empty line",
+      "input": "",
+      "commands": "Rtest",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace text - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "Rtest",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace special chars - space",
+      "input": "hello world",
+      "commands": "R ",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace special chars - tab",
+      "input": "hello world",
+      "commands": "R\t",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace special chars - punctuation",
+      "input": "hello world",
+      "commands": "R!@#$%",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace special chars - numbers",
+      "input": "hello world",
+      "commands": "R12345",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace special chars - mixed",
+      "input": "hello world",
+      "commands": "Rtest123!",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace multiple lines - basic",
+      "input": "hello\nworld\ntest",
+      "commands": "R<CR>new<CR>text",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Replace multiple lines - at beginning",
+      "input": "hello\nworld\ntest",
+      "commands": "0R<CR>new<CR>text",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace multiple lines - at end",
+      "input": "hello\nworld\ntest",
+      "commands": "$R<CR>new<CR>text",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Replace multiple lines - empty",
+      "input": "",
+      "commands": "R<CR>new<CR>text",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace multiple lines - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "R<CR>new<CR>text",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace and exit - basic",
+      "input": "hello world",
+      "commands": "Rtest<Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace and exit - at beginning",
+      "input": "hello world",
+      "commands": "0Rtest<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace and exit - at end",
+      "input": "hello world",
+      "commands": "$Rtest<Esc>",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Replace and exit - empty",
+      "input": "",
+      "commands": "Rtest<Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace and exit - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "Rtest<Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace newline and exit - basic",
+      "input": "hello world",
+      "commands": "R<CR><Esc>",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace newline and exit - at beginning",
+      "input": "hello world",
+      "commands": "0R<CR><Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace newline and exit - at end",
+      "input": "hello world",
+      "commands": "$R<CR><Esc>",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Replace newline and exit - empty",
+      "input": "",
+      "commands": "R<CR><Esc>",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace newline and exit - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "R<CR><Esc>",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace long text - basic",
+      "input": "hello world this is a test",
+      "commands": "RThis is a very long replacement text",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace long text - at beginning",
+      "input": "hello world this is a test",
+      "commands": "0RThis is a very long replacement text",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace long text - at end",
+      "input": "hello world this is a test",
+      "commands": "$RThis is a very long replacement text",
+      "cursor": [0, 25]
+    },
+    {
+      "name": "Replace long text - empty",
+      "input": "",
+      "commands": "RThis is a very long replacement text",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace long text - multiline",
+      "input": "line1\nline2 this is a test\nline3",
+      "commands": "RThis is a very long replacement text",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Replace shorter text - basic",
+      "input": "hello world this is a test",
+      "commands": "Rhi",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Replace shorter text - at beginning",
+      "input": "hello world this is a test",
+      "commands": "0Rhi",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace shorter text - at end",
+      "input": "hello world this is a test",
+      "commands": "$Rhi",
+      "cursor": [0, 25]
+    },
+    {
+      "name": "Replace shorter text - empty",
+      "input": "",
+      "commands": "Rhi",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Replace shorter text - multiline",
+      "input": "line1\nline2 this is a test\nline3",
+      "commands": "Rhi",
+      "cursor": [1, 2]
+    }
+  ]
+}

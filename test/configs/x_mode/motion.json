@@ -1,0 +1,635 @@
+{
+  "name": "Normal Mode Motion Tests",
+  "tests": [
+    {
+      "name": "Move left - basic",
+      "input": "hello world",
+      "commands": "h",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Move left - at beginning",
+      "input": "hello world",
+      "commands": "h",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move left - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "h",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Move left - empty line",
+      "input": "",
+      "commands": "h",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move left - single char",
+      "input": "x",
+      "commands": "h",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move right - basic",
+      "input": "hello world",
+      "commands": "l",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Move right - at end",
+      "input": "hello",
+      "commands": "l",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "Move right - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "l",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Move right - empty line",
+      "input": "",
+      "commands": "l",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move right - beginning",
+      "input": "hello",
+      "commands": "l",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move down - basic",
+      "input": "hello\nworld",
+      "commands": "j",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Move down - at bottom",
+      "input": "hello\nworld",
+      "commands": "j",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Move down - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "j",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Move down - single line",
+      "input": "hello",
+      "commands": "j",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Move down - empty",
+      "input": "",
+      "commands": "j",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move up - basic",
+      "input": "hello\nworld",
+      "commands": "k",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Move up - at top",
+      "input": "hello\nworld",
+      "commands": "k",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Move up - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "k",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Move up - single line",
+      "input": "hello",
+      "commands": "k",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Move up - empty",
+      "input": "",
+      "commands": "k",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move down with count - basic",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "3j",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move down with count - overflow",
+      "input": "line1\nline2\nline3",
+      "commands": "5j",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move down with count - exact",
+      "input": "line1\nline2\nline3",
+      "commands": "2j",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move down with count - from middle",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "2j",
+      "cursor": [1, 0]
+    },
+    {
+      "name": "Move down with count - large number",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "10j",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Move up with count - basic",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "3k",
+      "cursor": [4, 0]
+    },
+    {
+      "name": "Move up with count - overflow",
+      "input": "line1\nline2\nline3",
+      "commands": "5k",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Move up with count - exact",
+      "input": "line1\nline2\nline3",
+      "commands": "2k",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Move up with count - from middle",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "2k",
+      "cursor": [3, 0]
+    },
+    {
+      "name": "Move up with count - large number",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "10k",
+      "cursor": [4, 0]
+    },
+    {
+      "name": "Word forward - basic",
+      "input": "hello world test",
+      "commands": "w",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Word forward - from middle",
+      "input": "hello world test",
+      "commands": "w",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Word forward - multiline",
+      "input": "hello world\ntest case",
+      "commands": "w",
+      "cursor": [0, 6]
+    },
+    {
+      "name": "Word forward - at end",
+      "input": "hello world",
+      "commands": "w",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Word forward - punctuation",
+      "input": "hello, world!",
+      "commands": "w",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "WORD forward - basic",
+      "input": "hello world test",
+      "commands": "W",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "WORD forward - punctuation",
+      "input": "hello, world! test",
+      "commands": "W",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "WORD forward - from middle",
+      "input": "hello world test",
+      "commands": "W",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "WORD forward - multiline",
+      "input": "hello world\ntest case",
+      "commands": "W",
+      "cursor": [0, 6]
+    },
+    {
+      "name": "WORD forward - at end",
+      "input": "hello world",
+      "commands": "W",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Word end - basic",
+      "input": "hello world test",
+      "commands": "e",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Word end - from middle",
+      "input": "hello world test",
+      "commands": "e",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "Word end - multiline",
+      "input": "hello world\ntest case",
+      "commands": "e",
+      "cursor": [0, 6]
+    },
+    {
+      "name": "Word end - at end",
+      "input": "hello world",
+      "commands": "e",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Word end - punctuation",
+      "input": "hello, world!",
+      "commands": "e",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "WORD end - basic",
+      "input": "hello world test",
+      "commands": "E",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "WORD end - punctuation",
+      "input": "hello, world! test",
+      "commands": "E",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "WORD end - from middle",
+      "input": "hello world test",
+      "commands": "E",
+      "cursor": [0, 3]
+    },
+    {
+      "name": "WORD end - multiline",
+      "input": "hello world\ntest case",
+      "commands": "E",
+      "cursor": [0, 6]
+    },
+    {
+      "name": "WORD end - at end",
+      "input": "hello world",
+      "commands": "E",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Word backward - basic",
+      "input": "hello world test",
+      "commands": "b",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Word backward - from middle",
+      "input": "hello world test",
+      "commands": "b",
+      "cursor": [0, 8]
+    },
+    {
+      "name": "Word backward - multiline",
+      "input": "hello world\ntest case",
+      "commands": "b",
+      "cursor": [1, 5]
+    },
+    {
+      "name": "Word backward - at beginning",
+      "input": "hello world",
+      "commands": "b",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Word backward - punctuation",
+      "input": "hello, world!",
+      "commands": "b",
+      "cursor": [0, 12]
+    },
+    {
+      "name": "WORD backward - basic",
+      "input": "hello world test",
+      "commands": "B",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "WORD backward - punctuation",
+      "input": "hello, world! test",
+      "commands": "B",
+      "cursor": [0, 17]
+    },
+    {
+      "name": "WORD backward - from middle",
+      "input": "hello world test",
+      "commands": "B",
+      "cursor": [0, 8]
+    },
+    {
+      "name": "WORD backward - multiline",
+      "input": "hello world\ntest case",
+      "commands": "B",
+      "cursor": [1, 5]
+    },
+    {
+      "name": "WORD backward - at beginning",
+      "input": "hello world",
+      "commands": "B",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Word end backward - basic",
+      "input": "hello world test",
+      "commands": "ge",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "Word end backward - from middle",
+      "input": "hello world test",
+      "commands": "ge",
+      "cursor": [0, 8]
+    },
+    {
+      "name": "Word end backward - multiline",
+      "input": "hello world\ntest case",
+      "commands": "ge",
+      "cursor": [1, 5]
+    },
+    {
+      "name": "Word end backward - at beginning",
+      "input": "hello world",
+      "commands": "ge",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Word end backward - punctuation",
+      "input": "hello, world!",
+      "commands": "ge",
+      "cursor": [0, 12]
+    },
+    {
+      "name": "WORD end backward - basic",
+      "input": "hello world test",
+      "commands": "gE",
+      "cursor": [0, 10]
+    },
+    {
+      "name": "WORD end backward - punctuation",
+      "input": "hello, world! test",
+      "commands": "gE",
+      "cursor": [0, 17]
+    },
+    {
+      "name": "WORD end backward - from middle",
+      "input": "hello world test",
+      "commands": "gE",
+      "cursor": [0, 8]
+    },
+    {
+      "name": "WORD end backward - multiline",
+      "input": "hello world\ntest case",
+      "commands": "gE",
+      "cursor": [1, 5]
+    },
+    {
+      "name": "WORD end backward - at beginning",
+      "input": "hello world",
+      "commands": "gE",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Start of line - basic",
+      "input": "hello world",
+      "commands": "0",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Start of line - already at start",
+      "input": "hello world",
+      "commands": "0",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Start of line - with whitespace",
+      "input": "  hello world",
+      "commands": "0",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Start of line - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "0",
+      "cursor": [1, 3]
+    },
+    {
+      "name": "Start of line - empty",
+      "input": "",
+      "commands": "0",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "First non-blank - basic",
+      "input": "hello world",
+      "commands": "^",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "First non-blank - with whitespace",
+      "input": "  hello world",
+      "commands": "^",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "First non-blank - tabs",
+      "input": "\t\thello world",
+      "commands": "^",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "First non-blank - multiline",
+      "input": "line1\n  line2\nline3",
+      "commands": "^",
+      "cursor": [1, 5]
+    },
+    {
+      "name": "First non-blank - empty",
+      "input": "",
+      "commands": "^",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "End of line - basic",
+      "input": "hello world",
+      "commands": "$",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "End of line - already at end",
+      "input": "hello",
+      "commands": "$",
+      "cursor": [0, 4]
+    },
+    {
+      "name": "End of line - with whitespace",
+      "input": "hello world ",
+      "commands": "$",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "End of line - multiline",
+      "input": "line1\nline2\nline3",
+      "commands": "$",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "End of line - empty",
+      "input": "",
+      "commands": "$",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Last non-blank - basic",
+      "input": "hello world",
+      "commands": "g_",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Last non-blank - with whitespace",
+      "input": "hello world  ",
+      "commands": "g_",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Last non-blank - tabs",
+      "input": "hello world\t\t",
+      "commands": "g_",
+      "cursor": [0, 5]
+    },
+    {
+      "name": "Last non-blank - multiline",
+      "input": "line1\nline2  \nline3",
+      "commands": "g_",
+      "cursor": [1, 2]
+    },
+    {
+      "name": "Last non-blank - empty",
+      "input": "",
+      "commands": "g_",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to first line - basic",
+      "input": "line1\nline2\nline3",
+      "commands": "gg",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Go to first line - already at first",
+      "input": "line1\nline2\nline3",
+      "commands": "gg",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to first line - single line",
+      "input": "hello",
+      "commands": "gg",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Go to first line - empty",
+      "input": "",
+      "commands": "gg",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to first line - from middle",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "gg",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Go to last line - basic",
+      "input": "line1\nline2\nline3",
+      "commands": "G",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to last line - already at last",
+      "input": "line1\nline2\nline3",
+      "commands": "G",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Go to last line - single line",
+      "input": "hello",
+      "commands": "G",
+      "cursor": [0, 2]
+    },
+    {
+      "name": "Go to last line - empty",
+      "input": "",
+      "commands": "G",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to last line - from middle",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "G",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Go to line number - basic",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "3gg",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to line number - with G",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "3G",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to line number - beyond end",
+      "input": "line1\nline2\nline3",
+      "commands": "10gg",
+      "cursor": [0, 0]
+    },
+    {
+      "name": "Go to line number - line 1",
+      "input": "line1\nline2\nline3",
+      "commands": "1gg",
+      "cursor": [2, 0]
+    },
+    {
+      "name": "Go to line number - from middle",
+      "input": "line1\nline2\nline3\nline4\nline5",
+      "commands": "4gg",
+      "cursor": [1, 0]
+    }
+  ]
+}
