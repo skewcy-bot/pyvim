@@ -6,7 +6,7 @@ Created:  2024-08-18T19:07:50.750Z
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Tuple, List
+from typing import TYPE_CHECKING, Optional, Tuple, List, Dict
 import sys, tty, os, termios
 import copy
 import re
@@ -111,7 +111,7 @@ def _is_line_end(vim: VimEmulator, cursor: Optional[Cursor] = None) -> bool:
         cursor = vim._cursor
     if _is_out_of_bounds(vim, cursor):
         return False
-    return cursor.col == vim.width[cursor.row] - 1
+    return bool(cursor.col == vim.width[cursor.row] - 1)
 
 
 """
@@ -295,7 +295,7 @@ def _update_screen(vim: VimEmulator) -> None:
     ## //TODO: Check screen size from terminal size
 
     vim._screen.lines = vim.length
-    vim._screen.cols = max(x for x in vim.width) + 1
+    vim._screen.columns = max(x for x in vim.width) + 1
 
     if vim.row < vim._screen.top:
         vim._screen.top = vim.row
@@ -315,7 +315,7 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
-def ansi_to_html(text):
+def ansi_to_html(text: str) -> str:
     ansi_color_codes = {
         "30": "color:black;",
         "31": "color:red;",
@@ -343,7 +343,7 @@ def ansi_to_html(text):
         "97": "color:white;",
     }
 
-    def replace_color(match):
+    def replace_color(match: re.Match[str]) -> str:
         codes = match.group(1).split(";")
         styles = []
         for code in codes:
@@ -371,7 +371,7 @@ def ansi_to_html(text):
 
 
 def _print(
-    vim: VimEmulator, cl: str, comm_range: tuple[int, int], cursor: bool = True
+    vim: VimEmulator, cl: str, comm_range: Tuple[int, int], cursor: bool = True
 ) -> str:
     _comm = (
         cl[: comm_range[0]]
@@ -384,13 +384,15 @@ def _print(
     _msg = copy.deepcopy(vim._buffer)
 
     ## Set cursor color
-    if cursor and (vim.mode == "x" or vim.mode == "i"):
+    if cursor and (vim.mode == "x" or vim.mode == "i" or vim.mode == "r"):
         if vim.mode == "x":
             _cursor_color = 4  # blue
         elif vim.mode == "i":
             _cursor_color = 2  # green
         elif vim.mode == "r":
             _cursor_color = 1  # red
+        else:
+            _cursor_color = 4  # default to blue
         if vim.row < len(_msg.data) and vim._cursor.col < len(_msg.data[vim.row]):
             char = _msg.data[vim.row][vim._cursor.col]
             _msg.data[vim.row][
@@ -463,10 +465,10 @@ def _get_key() -> str:
         key_sequence = []
 
         while True:
-            ch = os.read(fd, 1)
-            if not ch:
+            char_bytes = os.read(fd, 1)
+            if not char_bytes:
                 break
-            key_sequence.append(ch)
+            key_sequence.append(char_bytes)
             break
 
         key_bytes = b"".join(key_sequence)
@@ -530,10 +532,10 @@ def _get_key() -> str:
                 # Handle other special cases if needed
                 return "<Unknown>"
         elif len(key_bytes) == 1:
-            ch = key_bytes[0]
+            ch_int: int = key_bytes[0]
             # Control characters (ASCII control codes)
-            if ch < 32 or ch == 127:
-                control_mappings = {
+            if ch_int < 32 or ch_int == 127:
+                control_mappings: Dict[int, str] = {
                     0: "<Nul>",
                     1: "<C-A>",
                     2: "<C-B>",
@@ -568,9 +570,9 @@ def _get_key() -> str:
                     31: "<C-/>",
                     127: "<Del>",
                 }
-                return control_mappings.get(ch, "<Unknown>")
+                return control_mappings.get(ch_int, "<Unknown>")
             else:
-                return chr(ch)
+                return chr(ch_int)
         else:
             return "<Unknown>"
     finally:
@@ -582,7 +584,7 @@ if __name__ == "__main__":
     try:
         print("Press keys (Press <Esc> to exit):")
         while True:
-            key = getkey()
+            key = _get_key()
             print(f"You pressed: {key}")
     except KeyboardInterrupt:
         pass

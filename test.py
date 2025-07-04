@@ -10,7 +10,7 @@ from pyvim.comms import _get_random_buffer
 from web.web import PyVimWeb
 
 if __name__ == "__main__":
-
+    pass
     ## //ANCHOR - Test hjkl
     # VimEmulator("hello\nworld\nhahahahaha").exec("")
     # VimEmulator("hello\nworld\nhahahahaha").exec("hjkhlklhkjhjlkhkjhjhjhlj")

@@ -6,7 +6,7 @@ Created:  2024-07-21T16:32:14.272Z
 """
 
 from time import sleep
-from typing import Callable, Tuple, Optional, Dict, Union
+from typing import Callable, Tuple, Optional, Dict, Union, Any
 from copy import deepcopy
 import re
 
@@ -32,13 +32,13 @@ Support nested object properties (getter and setter).
 """
 
 
-def delegate_property(attribute_name, property_name):
+def delegate_property(attribute_name: str, property_name: str) -> property:
     """Creates a property that delegates to an attribute of a nested object."""
 
-    def getter(self):
+    def getter(self: Any) -> Any:
         return getattr(getattr(self, attribute_name), property_name)
 
-    def setter(self, value):
+    def setter(self: Any, value: Any) -> None:
         setattr(getattr(self, attribute_name), property_name, value)
 
     return property(getter, setter)
@@ -66,9 +66,10 @@ class Cursor:
 
 
 class Screen:
-    def __init__(self, top: int = 0, lines: int = 5) -> None:
+    def __init__(self, top: int = 0, lines: int = 5, columns: int = 80) -> None:
         self.top = top
         self.lines = lines
+        self.columns = columns
 
 
 """
@@ -111,7 +112,7 @@ class VimEmulator:
         self.verbose = params.get("verbose", True)
         self.gif = params.get("gif", False)
         self.sleep_time = params.get("sleep_time", 1)
-        self.file_path = params.get("file_path", "output.txt")
+        self.file_path: str = str(params.get("file_path", "output.txt"))
         self._cmd: list[str] = []
 
     width = delegate_property("_buffer", "width")
@@ -120,10 +121,10 @@ class VimEmulator:
     col = delegate_property("_cursor", "col")
     buffer = delegate_property("_buffer", "data")
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: int) -> list[str]:
         return self._buffer.data[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: int, value: list[str]) -> None:
         self._buffer.data[key] = value
 
     def run(self, file_path: Optional[str] = None) -> None:
@@ -176,5 +177,5 @@ class VimEmulator:
                 return command, result.end()
         return None, 0
 
-    def __del__(self):
+    def __del__(self) -> None:
         print("\n\n")
