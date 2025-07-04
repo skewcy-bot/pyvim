@@ -197,10 +197,15 @@ def operator_J(vim: VimEmulator, args: str = "") -> VimEmulator:
     
     if ends_with_space or not stripped_next:
         vim[cursor.row] = current_line + stripped_next
-        vim.col = len(current_line)
+        # When line ends with space, cursor goes to the space position  
+        if ends_with_space and stripped_next:
+            vim.col = len(current_line)
+        else:
+            vim.col = len(current_line) - 1
     else:
         vim[cursor.row] = rstrip(current_line) + [" "] + stripped_next
-        vim.col = len(rstrip(current_line)) + 1
+        # Cursor should be at the space position
+        vim.col = len(rstrip(current_line))
 
     vim.width[cursor.row] = len(vim[cursor.row])
     vim.buffer.pop(cursor.row + 1)
@@ -221,8 +226,15 @@ def operator_gJ(vim: VimEmulator, args: str = "") -> VimEmulator:
         return vim
 
     original_length = len(vim[cursor.row])
-    vim[cursor.row] = vim[cursor.row] + vim[cursor.row + 1]
-    vim.col = original_length
+    next_line = vim[cursor.row + 1]
+    vim[cursor.row] = vim[cursor.row] + next_line
+    # Cursor should be at the first character of what was the second line
+    # But if the second line was empty, cursor should be at the last character of the first line
+    # An empty line is represented as either [] or ['']
+    if len(next_line) == 0 or (len(next_line) == 1 and next_line[0] == ''):
+        vim.col = original_length - 1
+    else:
+        vim.col = original_length
 
     vim.width[cursor.row] = len(vim[cursor.row])
     vim.buffer.pop(cursor.row + 1)
