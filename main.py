@@ -12,6 +12,11 @@ from typing import List
 
 if __name__ == "__main__":
     args: List[str] = sys.argv
+    
+    # Check for help flag
+    if len(args) > 1 and args[1] in ['-h', '--help']:
+        VimEmulator.print_keybindings()
+        sys.exit(0)
 
     if len(args) > 1 and args[1] == "web":
         from web.web import app, socketio  # type: ignore

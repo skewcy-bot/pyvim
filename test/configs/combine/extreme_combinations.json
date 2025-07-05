@@ -1,0 +1,23 @@
+{
+  "name": "Extreme Keystroke Combinations",
+  "tests": [
+    {
+      "name": "Maximum complexity with all motion types",
+      "input": "#!/usr/bin/env python3\n# Complex Python script for testing\nimport sys\nimport os\n\ndef main():\n    \"\"\"Main function\"\"\"\n    x = 10\n    y = 20\n    result = x + y\n    print(f\"Result: {result}\")\n    \n    for i in range(5):\n        print(f\"Iteration {i}\")\n    \n    return 0\n\nif __name__ == \"__main__\":\n    sys.exit(main())",
+      "commands": "ggf#r$j$r!3jfirmodule<Esc>jjfmciwstart<Esc>j3f\"ci\"Entry point function<Esc>2j$r52j0fxciwnumber<Esc>fyciwvalue<Esc>jf+r*$hhaCalculated<Esc>jfRci\"Output<Esc>f{a value<Esc>f}i of calculation<Esc>3jfrangeciwtimes<Esc>f5r8jf\"ci\"Loop: <Esc>f{rnumber<Esc>3jf=3f\"ci\"__console__<Esc>$i # End of script<Esc>6ggI    # Initialize variables<Esc>",
+      "cursor": [5, 28]
+    },
+    {
+      "name": "Ultra long command sequence with all features",
+      "input": "Header: Document Title\n======================\n\nSection 1: Introduction\n-----------------------\nThis is the first paragraph with some text.\nHere is another line in the introduction.\n\nSection 2: Main Content\n-----------------------\nThe main content starts here with details.\nMore information follows in this section.\nAdditional data and explanations provided.\n\nSection 3: Conclusion\n---------------------\nFinal thoughts and summary go here.\nClosing remarks for the document.",
+      "commands": "ggfDciTMain<Esc>ftci\"Report<Esc>j20lr*2jfSciWChapter<Esc>f1r5f:aOverview<Esc>2j20lr~3jfpci\"opening section<Esc>fwacontains<Esc>$aSee below.<Esc>jfHciSentence two<Esc>$3haIntro complete.<Esc>3jfSciWPart<Esc>f2rBf:aCore Information<Esc>j20lr#3jfTaActual<Esc>fsciwbegins<Esc>fwaand includes<Esc>$i!<Esc>jfMciWExtended<Esc>ffidetails<Esc>faare<Esc>$2haImportant.<Esc>jfAciWSupplemental<Esc>fecontent<Esc>$BciWincluded<Esc>afor clarity<Esc>3jfSciWAppendix<Esc>f3rXf:aSummary Notes<Esc>j18lr=2jfFciWConcluding<Esc>faobservations<Esc>$3hI[END]<Esc>jI> <Esc>$aThank you!<Esc>ggI[START] <Esc>",
+      "cursor": [0, 8]
+    },
+    {
+      "name": "Stress test with rapid mode switching and complex motions",
+      "input": "var config = {\n    host: 'localhost',\n    port: 8080,\n    debug: true,\n    cache: {\n        enabled: false,\n        ttl: 3600\n    },\n    routes: [\n        '/home',\n        '/about',\n        '/contact'\n    ]\n};",
+      "commands": "ggfcciwsettings<Esc>jfhci'server.example.com<Esc>jfpr30003j0fdciwverbose<Esc>ftr02j3wRactivated<Esc>jfttl7200<Esc>2j0frciwendpoints<Esc>j8xidashboard<Esc>jf/iapi/<Esc>$aUsers<Esc>jf/iapi/<Esc>$aMessages<Esc>2ji        '/settings',<Esc>o        '/profile'<Esc>2joexport default config;<Esc>5ggI    // Cache configuration<Esc>9ggI    // Available routes<Esc>gg$a // Main configuration object<Esc>3jfdr03ggf:aMODIFIED<Esc>7ggf3ci\"1h<Esc>",
+      "cursor": [6, 18]
+    }
+  ]
+}

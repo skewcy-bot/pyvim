@@ -1,0 +1,23 @@
+{
+  "name": "Complex Navigation and Editing Combinations",
+  "tests": [
+    {
+      "name": "Complex multi-mode editing with navigation",
+      "input": "The quick brown fox jumps over the lazy dog.\nPython is a powerful programming language.\nVim is an excellent text editor.\nCoding requires practice and patience.\nThis is line number five with some text.",
+      "commands": "5gg3wciWFINAL<Esc>0AAdded at end.<Esc>gg2j^3Ei(inserted)<Esc>G$5hRREPLACED<Esc>3gg0ISTART: <Esc>w5lr!2kJ010la and more<Esc>ggoNew line below first<Esc>2jONew line above third<Esc>",
+      "cursor": [2, 20]
+    },
+    {
+      "name": "Advanced movement with find/till and percentages",
+      "input": "function calculate(x, y) {\n    if (x > y) {\n        return x - y;\n    } else {\n        return x + y;\n    }\n}",
+      "commands": "ggfcaompute<Esc>j2fi;condition<Esc>%0trifirst<Esc>j%Fesecond<Esc>3ggT(2lr*2j2F+r/ggI// <Esc>GaCalculation complete<Esc>2k3w2xisimplified <Esc>",
+      "cursor": [4, 23]
+    },
+    {
+      "name": "Complex pattern with multiple operators and motions",
+      "input": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris.\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum.\nExcepteur sint occaecat cupidatat non proident sunt in culpa qui officia.",
+      "commands": "3gg5wiBOLD<Esc>2B3lr_ggGJ0fe2lr@4gg$10hRENDING<Esc>2ggfq3lr?g_aSUFFIX<Esc>5ggI[PREFIX] <Esc>3j7wciwtransformed<Esc>HM2wiseems<Esc>LbI(note) <Esc>ggfLr1fdoand more text<Esc>",
+      "cursor": [0, 25]
+    }
+  ]
+}

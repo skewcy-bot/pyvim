@@ -1,0 +1,23 @@
+{
+  "name": "Complex Motion Chain Tests",
+  "tests": [
+    {
+      "name": "Long chain of numbered motions and jumps",
+      "input": "Line 1: Start of document\nLine 2: Second line here\nLine 3: Third line content\nLine 4: Fourth line text\nLine 5: Middle of document\nLine 6: Sixth line here\nLine 7: Seventh line content\nLine 8: Eighth line text\nLine 9: Ninth line here\nLine 10: End of document",
+      "commands": "5gg3w2bI[MID]<Esc>10G$5haTEST<Esc>1gg02feriNEW<Esc>8gg^3Ei-EDIT<Esc>3j3k2j5l3h2wciwendpoint<Esc>HfSr*MLI>> <Esc>7gg0f:aHERE<Esc>2gg$Bge3lr#gg2j4w2B3Ei[TAG]<Esc>G0ftciTfinal<Esc>",
+      "cursor": [9, 18]
+    },
+    {
+      "name": "Complex brace and percentage navigation with edits",
+      "input": "class Example {\n    constructor() {\n        this.value = 0;\n    }\n    \n    method1() {\n        if (true) {\n            console.log('test');\n        }\n    }\n    \n    method2() {\n        return this.value;\n    }\n}",
+      "commands": "ggfEciSample<Esc>j2j$r5%ftaHIS<Esc>j2}0fmciwnewMethod<Esc>f(%Fcitesting<Esc>j}kI        // Comment<Esc>{j3wcivcounter<Esc>G%2jfvI_<Esc>3}2{5jf'ci'updated<Esc>ggGk$3haFINAL<Esc>",
+      "cursor": [13, 24]
+    },
+    {
+      "name": "Advanced ge/gE/g_ movements with complex edits",
+      "input": "The quick-brown_fox jumps.over (the) lazy+dog!\nAnother-line_with special#chars and_more stuff.\nThird line has normal words here.\nFourth_line-contains mix@of everything possible.\nLast line ends the test case here.",
+      "commands": "G$3ge2gEiINSERT<Esc>gg$geciwtail<Esc>2j0g_5h3geI[<Esc>ea]<Esc>3ggw2gEr-4gg$10geiprefix_<Esc>g_BciWREPLACED<Esc>ggf.agEtest<Esc>j03Eg_aSUFFIX<Esc>5gg03w2ger@G02f 3gEimodified_<Esc>",
+      "cursor": [4, 18]
+    }
+  ]
+}

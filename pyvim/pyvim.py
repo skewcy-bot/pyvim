@@ -177,5 +177,46 @@ class VimEmulator:
                 return command, result.end()
         return None, 0
 
+    @staticmethod
+    def print_keybindings() -> None:
+        """Print all supported keystrokes for each mode."""
+        print("PyVim Supported Keystrokes")
+        print("=" * 50)
+        
+        mode_names = {
+            "x": "NORMAL mode",
+            "i": "INSERT mode", 
+            "c": "COMMAND mode",
+            "r": "REPLACE mode"
+        }
+        
+        for mode, mode_name in mode_names.items():
+            print(f"\n{mode_name}:")
+            print("-" * len(mode_name))
+            
+            for pattern, func in sorted(match_table[mode].items()):
+                # Extract keystroke from function name
+                func_name = func.__name__
+                if func_name.startswith("operator_"):
+                    key = func_name[9:]  # Remove "operator_" prefix
+                elif func_name.startswith("motion_"):
+                    key = func_name[7:]  # Remove "motion_" prefix
+                else:
+                    key = func_name
+                
+                # Format special keys
+                key = key.replace("_", " ")
+                key = key.replace("esc", "Esc")
+                key = key.replace("enter", "Enter")
+                key = key.replace("tab", "Tab")
+                key = key.replace("ctrl c", "Ctrl+C")
+                key = key.replace("colon", ":")
+                key = key.replace("dollar", "$")
+                key = key.replace("caret", "^")
+                key = key.replace("num ", "{N}")
+                key = key.replace("char", "{char}")
+                
+                print(f"  {key}: {pattern}")
+    
     def __del__(self) -> None:
         print("\n\n")
